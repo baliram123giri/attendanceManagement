@@ -5,6 +5,7 @@ import { FaUnlockAlt } from "react-icons/fa";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema } from './validation';
+import Link from 'next/link';
 const Form = () => {
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
@@ -20,14 +21,14 @@ const Form = () => {
             <div>
                 <div className='flex items-center gap-2'>
                     <FaRegUser size={20} />
-                    <input {...register("email")} placeholder='Username' type="text" className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full' />
+                    <input {...register("email")} placeholder='Username*' type="text" className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full' />
                 </div>
                 {errors.email && <span className='text-red-400 text-xs ps-6'> {errors.email.message} </span>}
             </div>
             <div>
                 <div className='flex items-center gap-2'>
                     <FaUnlockAlt size={20} />
-                    <input {...register("password")} placeholder='Password' type="password" className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full' />
+                    <input {...register("password")} placeholder='Password*' type="password" className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full' />
                 </div>
                 {errors.password && <span className='text-red-400 text-xs ps-6'> {errors.password.message} </span>}
             </div>
@@ -36,9 +37,12 @@ const Form = () => {
                     <input type="checkbox" id='remeber' />
                     <label htmlFor="remeber" className='text-xs select-none hover:text-blue-200'>Remember Me</label>
                 </div>
-                <button className='bg-man-app-secondary px-5 hover:bg-man-app-secondary/80 rounded-sm text-xs p-1'>
+                <button className='bg-main-app-secondary px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
                     Login
                 </button>
+            </div>
+            <div className='text-xs text-center'>
+                <span>{`Don't Have Account?`}</span> <Link className='text-main-app-secondary hover:text-main-app-secondary/90' href={"/register"}>Sign Up</Link>
             </div>
         </form>
     )

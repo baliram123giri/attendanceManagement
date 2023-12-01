@@ -14,8 +14,14 @@ module.exports = {
       },
       colors: {
         "main-app-primary": "#583D72",
-        "man-app-secondary": "#FF8F72",
+        "main-app-secondary": "#FF8F72",
         "main-app-error": "#71AF86"
+      },
+      fontSize: {
+        "main-xl": "15px"
+      },
+      fontWeight: {
+        "semibold": "500"
       }
     },
 

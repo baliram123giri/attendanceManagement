@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-
+import "./auth.css"
 const inter = Inter({ subsets: ['latin'] })
 
 export default function AuthLayout({ children }) {
