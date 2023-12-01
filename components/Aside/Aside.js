@@ -10,6 +10,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MdCalendarMonth } from "react-icons/md";
 import { MdAssignment } from "react-icons/md";
+
 const Aside = () => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -40,7 +41,7 @@ const Aside = () => {
     ]
 
     return (
-        <aside className={` h-full asidebar ${asideBarToggle ? "" : "collapsed"} bg-main-app-primary`}>
+        <aside className={` h-full asidebar ${asideBarToggle ? "" : "collapsed"} bg-main-app-primary flex flex-col justify-between`}>
             <div>
                 <div className="relative">
                     <div

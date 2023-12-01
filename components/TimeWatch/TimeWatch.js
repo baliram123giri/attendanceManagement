@@ -13,7 +13,7 @@ const TimeWatch = () => {
     }, [currentTime])
 
     return (
-        <div className='flex gap-1 items-center'><IoMdStopwatch  size={16} />{currentTime.toLocaleTimeString()}</div>
+        <div className='flex gap-1 items-center'><IoMdStopwatch size={16} />{currentTime.toLocaleTimeString()}</div>
     )
 }
 
