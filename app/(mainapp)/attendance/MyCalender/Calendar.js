@@ -16,9 +16,9 @@ import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  const isDevlopment = process.env.NODE_ENV === "development"
   const joinHandler = () => {
-    const socket = io('http://localhost:8000');
+    const socket = io(isDevlopment ? 'http://localhost:8000' : "https://api.bgtechub.com");
     socket.emit("allAttendance", {
       attendance: [
         {
