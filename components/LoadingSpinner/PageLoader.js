@@ -7,8 +7,8 @@ const PageLoader = () => {
         <div className='min-h-[50px] w-full flex justify-center items-center'>
             <Blocks
                 visible={true}
-                height="60"
-                width="60"
+                height="30"
+                width="30"
                 color='#FF9130'
                 ariaLabel="blocks-loading"
                 wrapperStyle={{}}

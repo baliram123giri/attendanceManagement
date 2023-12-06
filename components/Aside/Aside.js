@@ -2,7 +2,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import "./aside.css"
 import React from 'react'
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6"
+import { FaAngleLeft, FaAngleRight, FaUsers } from "react-icons/fa6"
 import { ASIDEBAR_TOGGLE } from "@/redux/layoutReducer/layout.reducer"
 import { MdAssessment } from "react-icons/md";
 import { MdMenuBook } from "react-icons/md";
@@ -42,6 +42,11 @@ const Aside = () => {
         key: "/meeting",
         lable: "Meeting",
         icon: <SiGooglemeet size={25} />
+    },
+    {
+        key: "/students",
+        lable: "Students",
+        icon: <FaUsers  size={25} />
     }
     ]
 

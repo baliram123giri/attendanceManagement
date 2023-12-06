@@ -7,17 +7,18 @@ import io from 'socket.io-client';
 const JoinedList = () => {
     const [attendance, setAttendance] = useState([]);
     // const { data, isLoading } = useQuery({ queryFn: async () => await joinedList(), queryKey: ["joined list"] })
-    console.log("hello", attendance)
     const isDevlopment = process.env.NODE_ENV === "development"
     useEffect(() => {
         // Connect to the Socket.io server
         const socket = io(isDevlopment ? 'http://localhost:8000' : "https://api.bgtechub.com"); // replace with your server URL
-
+        socket.emit("allAttendance", null)
         // Listen for the 'allAttendance' event
         socket.on('allAttendance', (data) => {
-            setAttendance(data.attendance);
+            setAttendance(data);
+            //   console.log(data)
         });
 
+        return () => socket.disconnect()
         // Clean up the socket connection on component unmount
     }, [isDevlopment]); // Empty dependency array ensures this effect runs once when the component mounts
 

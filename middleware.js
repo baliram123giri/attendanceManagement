@@ -5,7 +5,12 @@ import { NextResponse } from 'next/server'
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
 
-    const accessToken = request.cookies.get("next-auth.session-token")?.value
+    NextResponse.next({
+        request: {
+            headers: new Headers(request.headers)
+        }
+    })
+    const accessToken = request.cookies.get("access_token")?.value
 
     const authRoute = request.nextUrl.pathname === "/login"
 
@@ -20,5 +25,5 @@ export function middleware(request) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/login", "/", "/meeting", "/attendance", "/classes", "/assignments"],
+    matcher: ["/login", "/", "/meeting", "/attendance", "/classes", "/assignments", "/students"],
 }

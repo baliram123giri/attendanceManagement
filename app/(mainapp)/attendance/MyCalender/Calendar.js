@@ -19,22 +19,14 @@ const Calendar = () => {
   const isDevlopment = process.env.NODE_ENV === "development"
   const joinHandler = () => {
     const socket = io(isDevlopment ? 'http://localhost:8000' : "https://api.bgtechub.com");
-    socket.emit("allAttendance", {
-      attendance: [
-        {
-          "_id": "656dc11cad4dd3df34ab82b1",
-          "date": "04-11-2023",
-          "time": "5:37:56 pm",
-          "name": "Sachin Giri",
-          "course": "React Js"
-        }
-      ]
-    })
+    socket.emit("allAttendance", null)
   }
 
   const { mutate, isLoading } = useMutation(addAttendance, {
     onSuccess({ message }) {
       toast(message, { type: "success" })
+    },
+    onSettled() {
       joinHandler()
     }
   })
@@ -80,8 +72,9 @@ const Calendar = () => {
     return new Date(year, month, 1).getDay();
   };
 
+
   function getFullDate(date, month) {
-    return new Date(currentDate.getFullYear(), month, date).toLocaleDateString().replace(/\//g, "-")
+    return new Date(currentDate.getFullYear(), month, date).toLocaleDateString()
   }
 
   const renderDays = () => {
@@ -97,7 +90,7 @@ const Calendar = () => {
     for (let i = lastMonthDays - startDay + 1; i <= lastMonthDays; i++) {
       const month = currentDate.getMonth() - 1
       const isFound = findFunctionAndUpdate(getFullDate(i, month))
-      const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()?.replace(/\//g, "-")
+      const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()
       days.push(
         <div key={`last_month_${i}`} className="day pb-1">
           <div className='flex items-center justify-between px-7 p-2'>
@@ -118,7 +111,7 @@ const Calendar = () => {
     for (let i = 1; i <= totalDays; i++) {
       const month = currentDate.getMonth()
       const isFound = findFunctionAndUpdate(getFullDate(i, month))
-      const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()?.replace(/\//g, "-")
+      const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()
       days.push(
         <div key={i} className={`day  pb-1  `}>
           <div className='flex items-center justify-between px-7 p-2'>
@@ -164,7 +157,7 @@ const Calendar = () => {
         <div div className='flex items-center gap-2 ms-auto text-sm text-main-app-primary font-semibold' >
           <TimeWatch />
           <button onClick={() => mutate({
-            "date": "04-11-2023",
+            "date": new Date().toLocaleDateString(),
             "isPresent": true,
             "course": "656b2e3e8716915d307c92e3"
           })} disabled={isLoading || isJoined} className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${isJoined ? "bg-main-app-secondary/50 cursor-not-allowed" : "bg-main-app-secondary "} me-2 shadow-md rounded text-white`}><HiCursorArrowRipple /> {isJoined ? "Joined" : isLoading ? "Loading" : `Join`}</button>

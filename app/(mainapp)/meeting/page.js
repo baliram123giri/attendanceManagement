@@ -1,7 +1,7 @@
 
 import React from 'react'
-import { BsCopy } from "react-icons/bs";
 import dynamic from 'next/dynamic';
+import { courseList } from './services';
 const JoinedList = dynamic(() => import("./List/JoinedList"), { ssr: false })
 const Form = dynamic(() => import('./Form/Form'), { ssr: false, })
 
@@ -11,14 +11,14 @@ export const metadata = {
 }
 
 const Meeting = async () => {
+    const data = await courseList() || []
     return (
         <>
-            <Form />
+            <Form data={data} />
             {/* join list  */}
             <section>
                 {/* //list  */}
                 <JoinedList />
-
             </section>
         </>
     )
