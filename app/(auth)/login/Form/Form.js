@@ -24,8 +24,9 @@ const Form = () => {
         },
         onSuccess: async function (data) {
             localStorage.setItem("token", JSON.stringify(data?.token))
-            await signIn("credentials", { redirect: true, user: data })
+            await signIn("credentials", { redirect: false, user: data })
             toast("User Logged in successfully...", { type: "success", position: "top-center" })
+            location.href = "https://app.bgtechub.com"
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error", position: "top-center" })
