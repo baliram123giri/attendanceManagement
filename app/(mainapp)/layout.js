@@ -3,8 +3,7 @@ import './globals.css'
 import Header from '@/components/Header/Header'
 import dynamic from 'next/dynamic'
 import ReduxStore from '@/Provider/ReduxStore'
-// import Aside from '@/components/Aside/Aside'
-dynamic(() => import('react-toastify/dist/ReactToastify.css'), { ssr: false })
+
 const Aside = dynamic(() => import('@/components/Aside/Aside'), { ssr: false })
 
 const inter = Inter({ subsets: ['latin'] })

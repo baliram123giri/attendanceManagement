@@ -1,38 +1,70 @@
 "use client"
 // Calendar.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCheckCircle } from "react-icons/fa";
 import "./Calender.css"
-import { MdCancel, MdOutlineArrowLeft } from 'react-icons/md';
+import { MdCancel } from 'react-icons/md';
 import { MdEventAvailable } from "react-icons/md";
 import { HiCursorArrowRipple, HiMiniArrowLongLeft, HiMiniArrowLongRight } from "react-icons/hi2";
 import dynamic from 'next/dynamic';
 const TimeWatch = dynamic(() => import('@/components/TimeWatch/TimeWatch'), { ssr: false })
 import { GrInProgress } from "react-icons/gr";
+import { useMutation } from '@tanstack/react-query';
+import { joinedList } from '../../meeting/services';
+import { addAttendance } from '../services';
+import { toast } from 'react-toastify';
+import io from 'socket.io-client';
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [data, setData] = useState([{
-    course: "HTML",
-    date: "28-11-2023",
-    time: "08:12:03",
-    isPresent: true
-  },
-  {
-    course: "React Js Devlopement",
-    time: "12:30:03",
-    date: "01-12-2023",
-    isPresent: true
-  },
-  {
-    course: "Java Devlopement",
-    time: "10:30:03",
-    date: "16-07-2023",
-    isPresent: true
+
+  const joinHandler = () => {
+    const socket = io('http://localhost:8000');
+    socket.emit("allAttendance", {
+      attendance: [
+        {
+          "_id": "656dc11cad4dd3df34ab82b1",
+          "date": "04-11-2023",
+          "time": "5:37:56 pm",
+          "name": "Sachin Giri",
+          "course": "React Js"
+        }
+      ]
+    })
   }
-  ])
+
+  const { mutate, isLoading } = useMutation(addAttendance, {
+    onSuccess({ message }) {
+      toast(message, { type: "success" })
+      joinHandler()
+    }
+  })
+
+  // useEffect(() => {
+  //   mutate()
+  // }, [mutate])
+
+  // const [data, setData] = useState([{
+  //   course: "HTML",
+  //   date: "28-11-2023",
+  //   time: "08:12:03",
+  //   isPresent: true
+  // },
+  // {
+  //   course: "React Js Devlopement",
+  //   time: "12:30:03",
+  //   date: "01-12-2023",
+  //   isPresent: true
+  // },
+  // {
+  //   course: "Java Devlopement",
+  //   time: "10:30:03",
+  //   date: "16-07-2023",
+  //   isPresent: true
+  // }
+  // ])
 
   function findFunctionAndUpdate(renderedDate) {
-    const result = data.find(({ date }) => date === renderedDate)
+    const result = []?.find(({ date }) => date === renderedDate)
     return result
   }
 
@@ -131,7 +163,11 @@ const Calendar = () => {
         <h6 className='mx-2 text-sm'>{`"I'm joining the `} <span className='font-semibold'>{`HTML`}</span> class on <span className='font-semibold'>{new Date().toDateString()}</span></h6>
         <div div className='flex items-center gap-2 ms-auto text-sm text-main-app-primary font-semibold' >
           <TimeWatch />
-          <button disabled={isJoined} className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${isJoined ? "bg-main-app-secondary/50 cursor-not-allowed" : "bg-main-app-secondary "} me-2 shadow-md rounded text-white`}><HiCursorArrowRipple /> {isJoined ? "Joined" : `Join`}</button>
+          <button onClick={() => mutate({
+            "date": "04-11-2023",
+            "isPresent": true,
+            "course": "656b2e3e8716915d307c92e3"
+          })} disabled={isLoading || isJoined} className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${isJoined ? "bg-main-app-secondary/50 cursor-not-allowed" : "bg-main-app-secondary "} me-2 shadow-md rounded text-white`}><HiCursorArrowRipple /> {isJoined ? "Joined" : isLoading ? "Loading" : `Join`}</button>
         </div >
       </div >
       <div className="calendar bg-white">

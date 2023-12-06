@@ -10,7 +10,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MdCalendarMonth } from "react-icons/md";
 import { MdAssignment } from "react-icons/md";
-
+import { SiGooglemeet } from "react-icons/si";
 const Aside = () => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -37,6 +37,11 @@ const Aside = () => {
         key: "/assignments",
         lable: "Assignments",
         icon: <MdAssignment size={25} />
+    },
+    {
+        key: "/meeting",
+        lable: "Meeting",
+        icon: <SiGooglemeet size={25} />
     }
     ]
 

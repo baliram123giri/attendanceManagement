@@ -1,19 +1,42 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { FaRegUser } from "react-icons/fa6";
 import { FaUnlockAlt } from "react-icons/fa";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema } from './validation';
 import Link from 'next/link';
+import { useMutation } from '@tanstack/react-query';
+import { loginApi } from './service';
+import { toast } from 'react-toastify';
+
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import { signIn } from 'next-auth/react';
 const Form = () => {
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange"
     })
+    const [loader, setLoader] = useState(false)
+    const { mutate } = useMutation(loginApi, {
+        onMutate() {
+            setLoader(true)
+        },
+        onSuccess: async function (data) {
+            localStorage.setItem("token", JSON.stringify(data?.token))
+            await signIn("credentials", { redirect: true, user: data })
+            toast("User Logged in successfully...", { type: "success", position: "top-center" })
+        },
+        onError({ response: { data: { message } } }) {
+            toast(message, { type: "error", position: "top-center" })
+        },
+        onSettled() {
+            setLoader(false)
+        }
+    })
 
     const onSubmit = (value) => {
-
+        mutate(value)
     }
 
     return (
@@ -38,7 +61,7 @@ const Form = () => {
                     <label htmlFor="remeber" className='text-xs select-none hover:text-blue-200'>Remember Me</label>
                 </div>
                 <button className='bg-main-app-secondary px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
-                    Login
+                    {loader ? <LoadingSpinner /> : "Login"}
                 </button>
             </div>
             <div className='text-xs text-center'>
