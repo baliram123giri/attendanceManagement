@@ -27,7 +27,7 @@ const Form = () => {
             localStorage.setItem("token", JSON.stringify(data?.token))
             await signIn("credentials", { redirect: false, user: data })
             toast("User Logged in successfully...", { type: "success", position: "top-center" })
-            location.href = isDevlopment ? "http://localhost:3000" : "https://app.bgtechub.com"
+            location.href = "https://app.bgtechub.com"
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error", position: "top-center" })
