@@ -10,7 +10,7 @@ const JoinedList = () => {
     const isDevlopment = process.env.NODE_ENV === "development"
     useEffect(() => {
         // Connect to the Socket.io server
-        const socket = io(isDevlopment ? 'http://localhost:8000' : "https://api.bgtechub.com"); // replace with your server URL
+        const socket = io("https://api.bgtechub.com"); // replace with your server URL
         socket.emit("allAttendance", null)
         // Listen for the 'allAttendance' event
         socket.on('allAttendance', (data) => {

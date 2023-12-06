@@ -18,7 +18,7 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const isDevlopment = process.env.NODE_ENV === "development"
   const joinHandler = () => {
-    const socket = io(isDevlopment ? 'http://localhost:8000' : "https://api.bgtechub.com");
+    const socket = io("https://api.bgtechub.com");
     socket.emit("allAttendance", null)
   }
 

@@ -10,7 +10,7 @@ export const getLocalStorageItem = (name) => {
 export const isDevlopment = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
 
 export const myAxios = axios.create({
-    baseURL: isDevlopment + "/api/v1",
+    baseURL: "https://api.bgtechub.com/api/v1",
     headers: {
         'Content-Type': 'application/json'
     },
