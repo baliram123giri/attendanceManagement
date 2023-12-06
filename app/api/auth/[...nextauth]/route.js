@@ -44,7 +44,7 @@ export const authOptions = {
     },
     secret: process.env.COOKIE_SECRET,
     pages: {
-        signIn: "/",
+        signIn: "https://app.bgtechub.com",
     },
     // Add other configuration options as needed
 }
