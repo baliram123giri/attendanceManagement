@@ -9,25 +9,23 @@ import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
 import { loginApi } from './service';
 import { toast } from 'react-toastify';
-
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 const Form = () => {
+    const { replace } = useRouter()
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange"
     })
-    const isDevlopment = process.env.NODE_ENV === "development"
     const [loader, setLoader] = useState(false)
     const { mutate } = useMutation(loginApi, {
-        onMutate() {
-            setLoader(true)
-        },
         onSuccess: async function (data) {
-            localStorage.setItem("token", JSON.stringify(data?.token))
-            await signIn("credentials", { redirect: false, user: data })
+
+            // localStorage.setItem("token", JSON.stringify(data?.token))
+            // await signIn("credentials", { redirect: false, user: data })
             toast("User Logged in successfully...", { type: "success", position: "top-center" })
-            location.href = "https://app.bgtechub.com"
+            location.href = "/"
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error", position: "top-center" })
@@ -37,8 +35,16 @@ const Form = () => {
         }
     })
 
-    const onSubmit = (value) => {
-        mutate(value)
+    const onSubmit = async (value) => {
+        setLoader(true)
+        const user = await signIn("credentials", { email: value.email, password: value.password, redirect: false })
+        if (user.ok) {
+            mutate(value)
+        } else {
+            setCustomerror("Invalid credentials!")
+            setLoader(false)
+        }
+        // mutate(value)
     }
 
     return (

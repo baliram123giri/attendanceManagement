@@ -8,7 +8,7 @@ import RotateLoader from '../LoadingSpinner/RotateLoader';
 import { useRouter } from 'next/navigation';
 
 const LogoutBtn = () => {
-    const { push } = useRouter()
+    const { replace } = useRouter()
     const { isLoading, mutate } = useMutation(async () => {
         try {
             const { data } = await myAxios.get(`/users/logout`)
@@ -19,7 +19,7 @@ const LogoutBtn = () => {
     }, {
         onSuccess({ message }) {
             toast(message, { type: "success" })
-            push("/logout")
+            replace("/logout")
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error" })

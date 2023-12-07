@@ -1,16 +1,13 @@
 import axios from "axios"
 
-export const baseUrl1 = "http://localhost:8000/api/v1"
-export const baseUrl = "https://api.bgtechub.com/api/v1"
-
 export const getLocalStorageItem = (name) => {
     return JSON.parse(localStorage.getItem(name))
 }
 
-export const isDevlopment = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
+export const baseURL = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
 
 export const myAxios = axios.create({
-    baseURL: "https://api.bgtechub.com/api/v1",
+    baseURL: `${baseURL}/api/v1`,
     headers: {
         'Content-Type': 'application/json'
     },
@@ -18,3 +15,17 @@ export const myAxios = axios.create({
 })
 
 
+
+export function getTimeAndDate(type = "date", date = new Date()) {
+    if (type === "date") {
+        const day = date.getDate()
+        const month = date.getMonth() + 1
+        const year = date.getFullYear()
+        return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month}/${year}`
+    } else {
+        let hours = date.getHours()
+        const minutes = date.getMinutes()
+        hours = hours % 12 || 12
+        return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`
+    }
+}

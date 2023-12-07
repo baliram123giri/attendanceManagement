@@ -11,13 +11,15 @@ import { usePathname } from "next/navigation"
 import { MdCalendarMonth } from "react-icons/md";
 import { MdAssignment } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
+import { useSession } from "next-auth/react"
 const Aside = () => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
     const pathname = usePathname()
-    const toggleHandler = () => {
+    const session = useSession()
 
-    }
+    const isAdmin = session?.data?.user?.role === "admin"
+
     const Menu = [{
         key: "/",
         lable: "Dashboard",
@@ -38,16 +40,16 @@ const Aside = () => {
         lable: "Assignments",
         icon: <MdAssignment size={25} />
     },
-    {
+    ...(isAdmin ? [{
         key: "/meeting",
         lable: "Meeting",
         icon: <SiGooglemeet size={25} />
-    },
-    {
+    }, {
         key: "/students",
         lable: "Students",
-        icon: <FaUsers  size={25} />
-    }
+        icon: <FaUsers size={25} />
+    }] : []),
+
     ]
 
     return (

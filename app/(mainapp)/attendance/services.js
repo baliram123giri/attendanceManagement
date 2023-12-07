@@ -6,3 +6,8 @@ export const addAttendance = async (values) => {
     return data
 }
 
+export const attendanceList = async ({ year, month }) => {
+    const { data } = await myAxios.get(`/attendance/list/${month}/${year}`)
+    return data
+}
+

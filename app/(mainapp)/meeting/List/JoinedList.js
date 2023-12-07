@@ -1,37 +1,48 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { joinedList } from '../services'
-import { useQuery } from '@tanstack/react-query'
 import { BsCopy } from 'react-icons/bs'
 import io from 'socket.io-client';
+import { baseURL } from '@/utils/utils'
+import DeleteAttendance from './DeleteAttendance'
+import useClipboard from "react-use-clipboard";
 const JoinedList = () => {
     const [attendance, setAttendance] = useState([]);
-    // const { data, isLoading } = useQuery({ queryFn: async () => await joinedList(), queryKey: ["joined list"] })
-    const isDevlopment = process.env.NODE_ENV === "development"
+    const [meetLink, setMeetLink] = useState(null)
+    const [isCopied, setCopied] = useClipboard(meetLink, {
+        // `isCopied` will go back to `false` after 1000ms.
+        successDuration: 1000,
+    });
+
     useEffect(() => {
         // Connect to the Socket.io server
-        const socket = io("https://api.bgtechub.com"); // replace with your server URL
+        const socket = io(baseURL); // replace with your server URL
         socket.emit("allAttendance", null)
+        socket.emit("meeting", null)
         // Listen for the 'allAttendance' event
         socket.on('allAttendance', (data) => {
             setAttendance(data);
             //   console.log(data)
         });
-
+        socket.on("meeting", (data) => {
+            setMeetLink(data[0]?.link)
+        })
         return () => socket.disconnect()
         // Clean up the socket connection on component unmount
-    }, [isDevlopment]); // Empty dependency array ensures this effect runs once when the component mounts
-
+    }, []); // Empty dependency array ensures this effect runs once when the component mounts
 
     return (
         <>
-            <div className='bg-white p-4'>
+            {meetLink && <div className='bg-white p-4'>
                 <h6 className='font-semibold'>Google Meet Link</h6>
                 <div className='flex  flex-wrap gap-3 items-center'>
-                    <small>https://meet.google.com/dny-ddff-mqj</small>
-                    <BsCopy className='cursor-pointer hover:text-blue-500' />
+                    <small>{meetLink}</small>
+                    <button onClick={setCopied}>
+                        {isCopied ? "Copied! 👍" : <BsCopy className='cursor-pointer hover:text-blue-500' />}
+                    </button>
+
                 </div>
-            </div>
+            </div>}
+
             <div className='bg-white py-4'>
                 <table className='w-full text-xs '>
                     <thead className='bg-gray-100 shadow h-10'>
@@ -40,11 +51,12 @@ const JoinedList = () => {
                             <th className='text-start'>Name</th>
                             <th className='text-start'>Course</th>
                             <th className='text-start'>Time</th>
+                            <th className='text-center'>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            attendance && attendance.map(({ _id, name, course, time }, index) => {
+                            attendance && attendance?.map(({ _id, name, course, time }, index) => {
 
                                 return <tr key={_id} className='py-3 h-10 border-b'>
                                     <td className='ps-4'>{index + 1}</td>
@@ -56,6 +68,7 @@ const JoinedList = () => {
                                     </div> </td>
                                     <td>{course}</td>
                                     <td>{time}</td>
+                                    <td><DeleteAttendance id={_id} /></td>
                                 </tr>
                             })
                         }

@@ -1,9 +1,8 @@
-import { baseUrl } from "@/utils/utils"
-import axios from "axios"
+import { myAxios } from "@/utils/utils"
 
 export const loginApi = async (values) => {
-    const { data } = await axios.post(`${baseUrl}/user/login`, values,{
-        withCredentials:true
-    } )
+    const { data } = await myAxios.post(`/user/login`, values, {
+        withCredentials: true
+    })
     return data
 }

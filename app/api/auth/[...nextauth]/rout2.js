@@ -1,4 +1,4 @@
-import { myAxios } from "@/utils/utils"
+
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
@@ -8,16 +8,11 @@ export const authOptions = {
         CredentialsProvider({
             name: "credentials",
             credentials: {},
-            async authorize(credentials) {
+            async authorize(data) {
                 try {
-                    // Validate the credentials or make a request to your authentication API
-                    const response = await myAxios.post("/user/login", {
-                        email: credentials.email,
-                        password: credentials.password,
-                    })
-                    // Check if authentication was successful
-                    if (response.data) {
-                        return response.data
+                    if (data) {
+                        console.log("line 14", data)
+                        return data
                     } else {
                         return Promise.resolve(null) // Authentication failed
                     }
@@ -30,9 +25,11 @@ export const authOptions = {
     session: {
         strategy: "jwt",
         maxAge: 4 * 60 * 60,
+
     },
     callbacks: {
         jwt: async ({ token, user }) => {
+            console.log("line 31", user)
             if (user) {
                 token.data = user
             }
@@ -42,12 +39,13 @@ export const authOptions = {
             if (token.data) {
                 session.user = token.data
             }
+
             return session
         }
     },
     secret: process.env.COOKIE_SECRET,
     pages: {
-        signIn: "/parties/customers",
+        signIn: "https://app.bgtechub.com",
     },
     // Add other configuration options as needed
 }
