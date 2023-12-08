@@ -1,5 +1,5 @@
 "use client"
-import { myAxios } from '@/utils/utils';
+import { baseURL, myAxios } from '@/utils/utils';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react'
 import { CiLock } from "react-icons/ci";
@@ -19,7 +19,7 @@ const LogoutBtn = () => {
     }, {
         onSuccess({ message }) {
             toast(message, { type: "success" })
-            replace("/logout")
+            replace(`${baseURL}/logout`)
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error" })
