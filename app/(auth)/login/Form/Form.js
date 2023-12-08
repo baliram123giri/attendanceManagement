@@ -11,9 +11,8 @@ import { loginApi } from './service';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+
 const Form = () => {
-    const { replace } = useRouter()
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange"
@@ -21,9 +20,6 @@ const Form = () => {
     const [loader, setLoader] = useState(false)
     const { mutate } = useMutation(loginApi, {
         onSuccess: async function (data) {
-
-            // localStorage.setItem("token", JSON.stringify(data?.token))
-            // await signIn("credentials", { redirect: false, user: data })
             toast("User Logged in successfully...", { type: "success", position: "top-center" })
             location.href = "/"
         },
@@ -37,12 +33,16 @@ const Form = () => {
 
     const onSubmit = async (value) => {
         setLoader(true)
-        const user = await signIn("credentials", { email: value.email, password: value.password, redirect: false })
-        if (user.ok) {
-            mutate(value)
-        } else {
-            setCustomerror("Invalid credentials!")
-            setLoader(false)
+        try {
+            const user = await signIn("credentials", { email: value.email, password: value.password, redirect: false })
+            if (user.ok) {
+                console.log(user)
+                mutate(value)
+            } else {
+                setLoader(false)
+            }
+        } catch (error) {
+            console.log(error)
         }
         // mutate(value)
     }

@@ -19,7 +19,7 @@ const LogoutBtn = () => {
     }, {
         onSuccess({ message }) {
             toast(message, { type: "success" })
-            replace(`${baseURL}/logout`)
+            replace(`${process.env.NODE_ENV === "development" ? "" : "https://app.bgtechub.com/logout"}/logout`)
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error" })
@@ -27,7 +27,7 @@ const LogoutBtn = () => {
     })
     if (isLoading) return <div className='flex items-center justify-center'><RotateLoader width={20} /></div>
     return (
-        <div onClick={mutate}><CiLock size={25} /></div>
+        <div onClick={mutate} className='bg-white border rounded-md p-1 shadow-sm'><CiLock size={25} /></div>
     )
 }
 

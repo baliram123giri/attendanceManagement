@@ -4,8 +4,11 @@ import Header from '@/components/Header/Header'
 import dynamic from 'next/dynamic'
 import ReduxStore from '@/Provider/ReduxStore'
 import { Suspense } from 'react'
+import PageLoader from '@/components/LoadingSpinner/PageLoader'
 
-const Aside = dynamic(() => import('@/components/Aside/Aside'), { ssr: false })
+const Aside = dynamic(() => import('@/components/Aside/Aside'), {
+  ssr: false, loading: () => <PageLoader />
+})
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +26,7 @@ export default function MainLayout({ children }) {
           <main className='w-full flex h-[90vh]'>
             <Aside />
             <div className='flex-1 h-full p-4 bg-gray-100 overflow-auto '>
-              <Suspense fallback={<p>Loading weather...</p>}>
+              <Suspense fallback={<p>Loading...</p>}>
                 {children}
               </Suspense>
             </div>

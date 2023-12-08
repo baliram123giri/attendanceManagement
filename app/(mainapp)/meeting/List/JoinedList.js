@@ -1,33 +1,57 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsCopy } from 'react-icons/bs'
-import io from 'socket.io-client';
-import { baseURL } from '@/utils/utils'
+
+import { baseURL, myAxios, statusHandler } from '@/utils/utils'
 import DeleteAttendance from './DeleteAttendance'
 import useClipboard from "react-use-clipboard";
+import { MdOutlineDeleteOutline } from 'react-icons/md';
+import { useMutation } from '@tanstack/react-query';
+import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
+const io = require("socket.io-client")
 const JoinedList = () => {
     const [attendance, setAttendance] = useState([]);
     const [meetLink, setMeetLink] = useState(null)
-    const [isCopied, setCopied] = useClipboard(meetLink, {
+    const [isCopied, setCopied] = useClipboard(meetLink?.link, {
         // `isCopied` will go back to `false` after 1000ms.
         successDuration: 1000,
     });
 
+    //socketRef red 
+    const socketRef = useRef(null)
+
+    const { mutate, isLoading } = useMutation(async () => {
+        const { data } = await myAxios.delete(`/meeting/delete/${meetLink?._id}`)
+        return data
+    },
+        {
+            ...statusHandler(), onSettled() {
+                socketRef.current.emit("allAttendance", null)
+                socketRef.current.emit("meeting", null)
+
+            }
+        }
+    )
+
+    const deleteMeetingHandler = () => {
+        mutate()
+    }
+
     useEffect(() => {
-        // Connect to the Socket.io server
-        const socket = io(baseURL); // replace with your server URL
-        socket.emit("allAttendance", null)
-        socket.emit("meeting", null)
+        // Connect to the SocketRef.io server
+        socketRef.current = io(baseURL); // replace with your server URL
+        socketRef.current.emit("allAttendance", null)
+        socketRef.current.emit("meeting", null)
         // Listen for the 'allAttendance' event
-        socket.on('allAttendance', (data) => {
+        socketRef.current.on('allAttendance', (data) => {
             setAttendance(data);
             //   console.log(data)
         });
-        socket.on("meeting", (data) => {
-            setMeetLink(data[0]?.link)
+        socketRef.current.on("meeting", (data) => {
+            setMeetLink(data[0])
         })
-        return () => socket.disconnect()
-        // Clean up the socket connection on component unmount
+        return () => socketRef.current.disconnect()
+        // Clean up the socketRef connection on component unmount
     }, []); // Empty dependency array ensures this effect runs once when the component mounts
 
     return (
@@ -35,10 +59,12 @@ const JoinedList = () => {
             {meetLink && <div className='bg-white p-4'>
                 <h6 className='font-semibold'>Google Meet Link</h6>
                 <div className='flex  flex-wrap gap-3 items-center'>
-                    <small>{meetLink}</small>
+                    <small>{meetLink?.link}</small>
                     <button onClick={setCopied}>
                         {isCopied ? "Copied! 👍" : <BsCopy className='cursor-pointer hover:text-blue-500' />}
                     </button>
+
+                    {isLoading ? <RotateLoader width={25} /> : <MdOutlineDeleteOutline onClick={deleteMeetingHandler} cursor={"pointer"} className='text-red-600' size={20} />}
 
                 </div>
             </div>}

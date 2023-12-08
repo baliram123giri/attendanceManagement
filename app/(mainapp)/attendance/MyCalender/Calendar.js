@@ -1,6 +1,6 @@
 "use client"
 // Calendar.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaCheckCircle } from "react-icons/fa";
 import "./Calender.css"
 import { MdCancel } from 'react-icons/md';
@@ -12,19 +12,21 @@ import { GrInProgress } from "react-icons/gr";
 import { useMutation } from '@tanstack/react-query';
 import { addAttendance, attendanceList } from '../services';
 import { toast } from 'react-toastify';
-import io from 'socket.io-client';
 import { baseURL } from '@/utils/utils';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
+const io = require("socket.io-client")
 const Calendar = () => {
   //socket io
-  const socket = io(baseURL);
+
+  //socketRef red 
+  const socketRef = useRef(null)
+
   const [course, setCourse] = useState(null)
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const joinHandler = () => {
     //emit attendance
-    socket.emit("allAttendance", null)
-    socket.disconnect()
+    socketRef.current.emit("allAttendance", null)
   }
 
   //attendace list 
@@ -43,6 +45,7 @@ const Calendar = () => {
       joinHandler()
     }
   })
+
 
   function findFunctionAndUpdate(renderedDate) {
     const result = data?.find(({ date }) => date === renderedDate)
@@ -146,8 +149,9 @@ const Calendar = () => {
   }, [currentDate, muateAttendanceList])
 
   useEffect(() => {
-    socket.emit("meeting", null)
-    socket.on("meeting", (data) => {
+    socketRef.current = io(baseURL);
+    socketRef.current.emit("meeting", null)
+    socketRef.current.on("meeting", (data) => {
       setCourse(data[0] || null)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

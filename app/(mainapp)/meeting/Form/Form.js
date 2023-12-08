@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createMeetingSchem } from "./validation";
 import { useMutation } from "@tanstack/react-query";
-import { baseURL, myAxios } from "@/utils/utils";
-import { toast } from "react-toastify";
+import { baseURL, myAxios, statusHandler } from "@/utils/utils";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import io from "socket.io-client";
 
@@ -19,16 +18,7 @@ const Form = ({ data }) => {
             return data;
         },
         {
-            onSuccess({ message }) {
-                toast(message, { type: "success" });
-            },
-            onError({
-                response: {
-                    data: { message },
-                },
-            }) {
-                toast(message, { type: "error" });
-            },
+            ...statusHandler(),
             onSettled() {
                 socket.emit("meeting", null);
             },
@@ -75,8 +65,8 @@ const Form = ({ data }) => {
                 <button
                     disabled={isLoading}
                     className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${watch().link && watch().course
-                            ? "bg-main-app-secondary text-white "
-                            : "text-gray-600 opacity-40 cursor-not-allowed"
+                        ? "bg-main-app-secondary text-white "
+                        : "text-gray-600 opacity-40 cursor-not-allowed"
                         } me-2 shadow-md rounded `}
                 >
                     <HiCursorArrowRipple /> {isLoading ? <LoadingSpinner /> : `Create`}

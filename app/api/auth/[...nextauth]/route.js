@@ -22,7 +22,7 @@ export const authOptions = {
                         return Promise.resolve(null) // Authentication failed
                     }
                 } catch (error) {
-                    return Promise.resolve(null) // Handle errors appropriately
+                    return Promise.resolve(error) // Handle errors appropriately
                 }
             },
         }),

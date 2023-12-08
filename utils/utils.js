@@ -1,4 +1,5 @@
 import axios from "axios"
+import { toast } from "react-toastify"
 
 export const getLocalStorageItem = (name) => {
     return JSON.parse(localStorage.getItem(name))
@@ -14,18 +15,53 @@ export const myAxios = axios.create({
     withCredentials: true
 })
 
+export function statusHandler() {
+    try {
+        return {
+            onSuccess({ message }) {
+                toast(message, { type: "success" })
+            },
+            onError({ response: { data: { message } } }) {
+                toast(message, { type: "error" })
+            }
+
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
-export function getTimeAndDate(type = "date", date = new Date()) {
+// export function getTimeAndDate(type = "date", date = new Date()) {
+//     if (type === "date") {
+//         const day = date.getDate()
+//         const month = date.getMonth() + 1
+//         const year = date.getFullYear()
+//         return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month}/${year}`
+//     } else {
+//         let hours = date.getHours()
+//         const minutes = date.getMinutes()
+//         hours = hours % 12 || 12
+//         return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`
+//     }
+// }
+
+export function getTimeAndDate(type = "date", date = new Date(), locale = "en-IN", timezone = "Asia/Kolkata") {
     if (type === "date") {
-        const day = date.getDate()
-        const month = date.getMonth() + 1
-        const year = date.getFullYear()
-        return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month}/${year}`
+        return date.toLocaleString(locale, {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            timeZone: timezone
+        });
     } else {
-        let hours = date.getHours()
-        const minutes = date.getMinutes()
-        hours = hours % 12 || 12
-        return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`
+        const timeFormat = date.toLocaleString(locale, {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: timezone
+        });
+
+        return timeFormat;
     }
 }
