@@ -25,11 +25,23 @@ export async function middleware(request) {
     } else if (!isAdmin && checkPath(["/meeting", "/students"])) {
         //if its not not admin dont access
         return NextResponse.redirect(new URL('/', request.url))
+    } else if (!isAdmin) {
+        if (checkPath(["/attendance"])) {
+            return NextResponse.redirect(new URL('/attendance/myattendance', request.url))
+        } else if (checkPath(["/assignments"])) {
+            return NextResponse.redirect(new URL('/assignments/myassignments', request.url))
+        }
+    } else if (isAdmin) {
+        if (checkPath(["/attendance/myattendance"])) {
+            return NextResponse.redirect(new URL('/attendance', request.url))
+        } else if (checkPath(["/assignments/myassignments"])) {
+            return NextResponse.redirect(new URL('/assignments', request.url))
+        }
     }
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/login", "/", "/meeting", "/attendance", "/classes", "/assignments", "/students"],
+    matcher: ["/login", "/", "/meeting", "/attendance/:path*", "/classes", "/assignments/:path*", "/students"],
 }
 

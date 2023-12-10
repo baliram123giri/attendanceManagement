@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 const TimeWatch = dynamic(() => import('@/components/TimeWatch/TimeWatch'), { ssr: false })
 import { GrInProgress } from "react-icons/gr";
 import { useMutation } from '@tanstack/react-query';
-import { addAttendance, attendanceList } from '../services';
+import { addAttendance, attendanceList } from '../../services';
 import { toast } from 'react-toastify';
 import { baseURL } from '@/utils/utils';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';

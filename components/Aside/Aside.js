@@ -69,7 +69,7 @@ const Aside = () => {
                 </div>
                 <ol className="pt-8">
                     {Menu.map(({ key, icon, lable }) => (
-                        <li className="mb-2" key={key}><Link href={key} className={`flex ${pathname === key ? "bg-main-app-secondary" : ""} items-center gap-2 ${asideBarToggle ? "" : "justify-center"} text-main-xl p-2 text-white`}>{icon} {asideBarToggle && <span>{lable}</span>}</Link></li>
+                        <li className="mb-2" key={key}><Link href={key} className={`flex ${(pathname === key) || (`/${pathname?.split("/")[1]}` === key) ? "bg-main-app-secondary" : ""} items-center gap-2 ${asideBarToggle ? "" : "justify-center"} text-main-xl p-2 text-white`}>{icon} {asideBarToggle && <span>{lable}</span>}</Link></li>
                     ))}
                 </ol>
             </div>
