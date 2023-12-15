@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.chat_message {
+    width: fit-content;
+    max-width: 60%;
+}

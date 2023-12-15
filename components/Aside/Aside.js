@@ -12,6 +12,7 @@ import { MdCalendarMonth } from "react-icons/md";
 import { MdAssignment } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import { useSession } from "next-auth/react"
+import { IoChatbubblesOutline } from "react-icons/io5";
 const Aside = () => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -49,7 +50,11 @@ const Aside = () => {
         lable: "Students",
         icon: <FaUsers size={25} />
     }] : []),
-
+    {
+        key: "/chats",
+        lable: "Chats",
+        icon: <IoChatbubblesOutline size={25} />
+    },
     ]
 
     return (

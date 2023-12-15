@@ -2,3 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+.users_messages::-webkit-scrollbar {
+    width: 8px;
+    background: #E9F3FF;
+
+    border-radius: 10px;
+}
+
+.users_messages::-webkit-scrollbar-track {
+    width: 8px;
+
+
+}
+
+.users_messages::-webkit-scrollbar-thumb {
+    background: #71af869f;
+    
+    border-radius: 10px;
+}

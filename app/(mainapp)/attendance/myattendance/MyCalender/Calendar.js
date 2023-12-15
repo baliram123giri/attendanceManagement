@@ -46,9 +46,13 @@ const Calendar = () => {
     }
   })
 
-
+  //  console.log(new Date("2023-10-11T18:30:00.000Z").toLocaleDateString("en-US"))
   function findFunctionAndUpdate(renderedDate) {
-    const result = data?.find(({ date }) => date === renderedDate)
+
+    const result = data?.find(({ date }) => {
+      console.log("53", date)
+      return new Date(date).toLocaleDateString("en-US") === renderedDate
+    })
     return result
   }
 
@@ -83,6 +87,7 @@ const Calendar = () => {
       const month = currentDate.getMonth() - 1
       const isFound = findFunctionAndUpdate(getFullDate(i, month))
       const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()
+
       days.push(
         <div key={`last_month_${i}`} className="day pb-1">
           <div className='flex items-center justify-between px-7 p-2'>
@@ -104,6 +109,7 @@ const Calendar = () => {
       const month = currentDate.getMonth()
       const isFound = findFunctionAndUpdate(getFullDate(i, month))
       const activeDate = getFullDate(i, month) === new Date()?.toLocaleDateString()
+
       days.push(
         <div key={i} className={`day  pb-1  `}>
           <div className='flex items-center justify-between px-7 p-2'>

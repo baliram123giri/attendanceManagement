@@ -1,11 +1,16 @@
 import axios from "axios"
 import { toast } from "react-toastify"
+import { io } from "socket.io-client"
 
 export const getLocalStorageItem = (name) => {
     return JSON.parse(localStorage.getItem(name))
 }
 
+
+// export const baseURL = "http://localhost:8000"
 export const baseURL = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
+
+export const socket = io(baseURL)
 
 export const myAxios = axios.create({
     baseURL: `${baseURL}/api/v1`,
