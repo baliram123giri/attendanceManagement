@@ -9,12 +9,13 @@ export const ChatContex = createContext()
 export const ChatContexProvider = ({ children }) => {
 
     const { user, usersList } = useContext(AuthContext)
-    const [onlineUsers, setOnlineUsers] = useState([])
+
     const [usersChat, setUsersChat] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
-    const [messages, setMessages] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState(null);
-
+    const [notifications, setNotifications] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState([])
     //set online users
     const { mutate: muateChatList } = useMutation(async () => {
         const { data } = await myAxios.get(`/chats/${user?._id}`)
@@ -51,25 +52,57 @@ export const ChatContexProvider = ({ children }) => {
         };
     }, [user?._id])
 
+    const updateSeen = useCallback(async function (chatId) {
+        const { data } = await myAxios.put(`/messages/update/${chatId}`)
+        return data
+    }, [])
+
     // //recive message socket.io
     useEffect(() => {
-         
+
         socket.on("getMessage", (data) => {
-            console.log(data)
+            if (currentChat?._id !== data?.chatId) return
             setMessages((prev) => [...prev, data]);
+            if (user?._id !== data?.senderId) {
+                updateSeen(data?.chatId)
+            }
         })
 
-        return () => socket.off("getMessage")
+        // socket.on("getNotification", (res) => {
+        //     const isChatOpen = currentChat?.members?.some(id => id === res?.senderId)
+        //     setNotifications((prev) => [...prev, ...(isChatOpen ? [{ ...res, isRead: true }] : [res])])
+        // })
+        return () => {
+            socket.off("getMessage")
 
-    }, [socket])
+            // socket.off("getNotification")
+        }
 
+    }, [socket, currentChat])
+
+
+    useEffect(() => {
+        socket.on("messageSeen", (res) => {
+            const findIndex = messages.findIndex(({ _id }) => res._id === _id)
+            if (findIndex !== -1) {
+                messages[findIndex].isRead = true
+            }
+        })
+        return () => socket.off("messageSeen")
+    }, [socket, messages])
     //messages
     useEffect(() => {
         async function getMessages() {
             try {
                 const { data } = await myAxios.get(`/messages/${currentChat?._id}`);
                 setMessages(data);
+                const isFound = data?.find(({ senderId, isRead }) => {
+                    return (senderId !== user?._id) && isRead === false
+                })
 
+                if (isFound) {
+                    updateSeen(isFound?.chatId)
+                }
                 return data;
             } catch (error) {
                 console.log(error.response);
@@ -99,5 +132,17 @@ export const ChatContexProvider = ({ children }) => {
         []
     );
 
-    return <ChatContex.Provider value={{ onlineUsers, CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages }}>{children}</ChatContex.Provider>
+    useEffect(() => {
+
+        const handleOnlineUsers = (users) => {
+            setOnlineUsers(users)
+        }
+        socket.on("onlineUsers", handleOnlineUsers)
+        return () => socket.off("onlineUsers")
+    }, [socket])
+
+
+
+
+    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, onlineUsers }}>{children}</ChatContex.Provider>
 }

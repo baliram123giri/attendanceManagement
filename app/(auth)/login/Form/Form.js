@@ -36,7 +36,6 @@ const Form = () => {
         try {
             const user = await signIn("credentials", { email: value.email, password: value.password, redirect: false })
             if (user.ok) {
-                console.log(user)
                 mutate(value)
             } else {
                 setLoader(false)

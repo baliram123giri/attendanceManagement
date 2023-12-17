@@ -14,6 +14,7 @@ const Users = () => {
     const [open, setOpen] = useState(false)
     const { usersList, user } = useContext(AuthContext)
     const { usersChat, updateChat, currentChat } = useContext(ChatContex)
+ 
     return (
         <div>
             <Modal setOpen={setOpen} open={open} width={60} > <UserSarchList setOpen={setOpen} /></Modal>

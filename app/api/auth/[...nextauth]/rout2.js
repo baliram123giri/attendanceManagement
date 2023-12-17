@@ -11,7 +11,6 @@ export const authOptions = {
             async authorize(data) {
                 try {
                     if (data) {
-                        console.log("line 14", data)
                         return data
                     } else {
                         return Promise.resolve(null) // Authentication failed

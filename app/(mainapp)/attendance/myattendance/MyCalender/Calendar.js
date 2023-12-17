@@ -50,7 +50,6 @@ const Calendar = () => {
   function findFunctionAndUpdate(renderedDate) {
 
     const result = data?.find(({ date }) => {
-      console.log("53", date)
       return new Date(date).toLocaleDateString("en-US") === renderedDate
     })
     return result
