@@ -2,14 +2,17 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { AuthContext } from "./AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { baseURL, myAxios, socket } from "@/utils/utils";
-
-
+import { usePathname } from "next/navigation";
+import notificationSound from "@/public/Audio/notification.mp3"
+import { Howl } from 'howler';
 export const ChatContex = createContext()
 
 export const ChatContexProvider = ({ children }) => {
-
+    const pathname = usePathname()
     const { user, usersList } = useContext(AuthContext)
-
+    const sound = new Howl({
+        src: [notificationSound],
+    });
     const [usersChat, setUsersChat] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
     const [messages, setMessages] = useState([]);
@@ -29,10 +32,22 @@ export const ChatContexProvider = ({ children }) => {
         const { data } = await myAxios.post(`/chats`, value)
         return data
     })
+
     //call user
     useEffect(() => {
         if (user?._id) {
+            const getNotification = async () => {
+                try {
+                    const { data } = await myAxios.get(`/messages/notifications/${user?._id}`);
+                    setNotifications(data)
+                    return data;
+                } catch (error) {
+                    console.log(error.response);
+                }
+            }
             muateChatList()
+            getNotification()
+
         }
     }, [muateChatList, user?._id])
 
@@ -50,11 +65,15 @@ export const ChatContexProvider = ({ children }) => {
         return () => {
             socket.off("addChat");
         };
-    }, [user?._id])
+    }, [user?._id, usersChat, currentChat, socket])
 
     const updateSeen = useCallback(async function (chatId) {
-        const { data } = await myAxios.put(`/messages/update/${chatId}`)
-        return data
+        try {
+            const { data } = await myAxios.put(`/messages/update/${chatId}`)
+            return data
+        } catch (error) {
+            console.log(error.response)
+        }
     }, [])
 
     // //recive message socket.io
@@ -63,33 +82,45 @@ export const ChatContexProvider = ({ children }) => {
         socket.on("getMessage", (data) => {
             if (currentChat?._id !== data?.chatId) return
             setMessages((prev) => [...prev, data]);
-            if (user?._id !== data?.senderId) {
+            if ((user?._id !== data?.senderId) && pathname === "/chats") {
                 updateSeen(data?.chatId)
+
             }
         })
 
-        // socket.on("getNotification", (res) => {
-        //     const isChatOpen = currentChat?.members?.some(id => id === res?.senderId)
-        //     setNotifications((prev) => [...prev, ...(isChatOpen ? [{ ...res, isRead: true }] : [res])])
-        // })
+        socket.on("getNotification", (res) => {
+            const isChatOpen = currentChat?.members?.some(id => id === res?.senderId?._id)
+            if ((pathname !== "/chats") && (user?._id === res?.receiverId)) {
+                sound.play()
+            }
+            if ((!isChatOpen || pathname !== "/chats") && (user?._id === res?.receiverId)) {
+                setNotifications((prev) => [...prev, res])
+            }
+        })
         return () => {
             socket.off("getMessage")
 
-            // socket.off("getNotification")
+            socket.off("getNotification")
         }
 
-    }, [socket, currentChat])
+    }, [socket, currentChat, pathname, sound, messages])
 
 
     useEffect(() => {
         socket.on("messageSeen", (res) => {
+
             const findIndex = messages.findIndex(({ _id }) => res._id === _id)
             if (findIndex !== -1) {
+                // console.log(res, "RESmessageSeen")
+                // console.log(messages, "messageSeen")
+                // const data = { ..., isRead: true }
                 messages[findIndex].isRead = true
+                // setMessages([...messages, data])
             }
         })
         return () => socket.off("messageSeen")
-    }, [socket, messages])
+    }, [messages])
+
     //messages
     useEffect(() => {
         async function getMessages() {
@@ -115,12 +146,13 @@ export const ChatContexProvider = ({ children }) => {
 
     //send message
     const sendMessage = useCallback(
-        async (text, chatId, senderId, setTextMessage) => {
+        async (text, chatId, receiverId, senderId, setTextMessage) => {
             try {
                 const { data } = await myAxios.post(`/messages`, {
                     text,
                     chatId,
                     senderId,
+                    receiverId
                 });
                 setTextMessage("");
                 setNewMessage(data)
@@ -144,5 +176,7 @@ export const ChatContexProvider = ({ children }) => {
 
 
 
-    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, onlineUsers }}>{children}</ChatContex.Provider>
+    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, onlineUsers, notifications, setNotifications }}>
+        {children}
+    </ChatContex.Provider>
 }

@@ -14,7 +14,7 @@ const Users = () => {
     const [open, setOpen] = useState(false)
     const { usersList, user } = useContext(AuthContext)
     const { usersChat, updateChat, currentChat } = useContext(ChatContex)
- 
+
     return (
         <div>
             <Modal setOpen={setOpen} open={open} width={60} > <UserSarchList setOpen={setOpen} /></Modal>
@@ -36,7 +36,7 @@ const Users = () => {
 
             <div className='my-2 mt-5 h-full overflow-auto users_messages' >
                 {usersChat?.length > 0 && usersChat?.map((chat, index) => {
-                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard isActive={JSON.stringify(currentChat) === JSON.stringify(chat)} chat={chat} user={user} imgSrc={avatar} message={"When will it be ready?"} username={"Baliram Giri"} /></div>
+                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard isActive={currentChat?._id === chat?._id} chat={chat} user={user} imgSrc={avatar} message={"When will it be ready?"} username={"Baliram Giri"} /></div>
                 })}
             </div>
         </div>

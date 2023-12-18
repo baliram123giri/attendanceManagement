@@ -13,7 +13,7 @@ import { useFecthRecipientUser } from '@/hooks/useFecthRecipient'
 import { AuthContext } from '@/Provider/contexApi/AuthContext'
 
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader'
-import { myAxios } from '@/utils/utils'
+
 const ChatBox = () => {
     const { currentChat, sendMessage, messages, onlineUsers } = useContext(ChatContex)
     const { user } = useContext(AuthContext)
@@ -62,7 +62,7 @@ const ChatBox = () => {
                     <div className='flex-1'>
                         <InputEmoji value={textMessage} onChange={setTextMessage} cleanOnEnter />
                     </div>
-                    <div onClick={() => sendMessage(textMessage, currentChat?._id, user?._id, setTextMessage)} className=' me-3 ps-1.5 cursor-pointer h-11  flex justify-center items-center text-main-app-error rounded-full'>
+                    <div onClick={() => sendMessage(textMessage, currentChat?._id, currentChat?.members?.filter((id) => id !== user?._id)[0], user?._id, setTextMessage)} className=' me-3 ps-1.5 cursor-pointer h-11  flex justify-center items-center text-main-app-error rounded-full'>
                         <IoMdSend size={25} />
                     </div>
                 </div>
