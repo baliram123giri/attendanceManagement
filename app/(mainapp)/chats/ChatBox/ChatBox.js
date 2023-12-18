@@ -16,7 +16,7 @@ import RotateLoader from '@/components/LoadingSpinner/RotateLoader'
 import { FaUserCircle } from 'react-icons/fa'
 
 const ChatBox = () => {
-    const { currentChat, sendMessage, messages, onlineUsers } = useContext(ChatContex)
+    const { currentChat, sendMessage, messages, onlineUsers, setMessages } = useContext(ChatContex)
     const { user } = useContext(AuthContext)
     const { isLoading, recipientUser } = useFecthRecipientUser(currentChat, user)
     const [textMessage, setTextMessage] = useState("")
@@ -28,6 +28,10 @@ const ChatBox = () => {
     }, [messages])
 
 
+    //function
+    const deleteHandler = (message) => {
+        setMessages(messages?.filter(({ _id }) => message?._id !== _id))
+    }
     if (!currentChat) return null
     if (isLoading) return <div style={{ background: `url(${chatbg.src})`, backgroundSize: 300, backgroundColor: " rgba(255, 255, 255, 0.2)" }} className='flex justify-center items-center h-full'><RotateLoader /></div>
     const isOnline = onlineUsers?.find(({ userId }) => userId === currentChat?.members[1])
@@ -35,7 +39,7 @@ const ChatBox = () => {
     return (
         <div className='h-full'>
             <div className={`flex items-center gap-3 py-2 border-t cursor-pointer w-full bg-white  px-2`}>
-                { <FaUserCircle className='text-gray-400 mb-1' size={40} />}
+                {<FaUserCircle className='text-gray-400 mb-1' size={40} />}
                 {/* <Image className='shadow' style={{ borderRadius: "50%", height: 50, width: 50 }} src={avatar3} alt='avatar' /> */}
                 <div className='flex justify-between w-full'>
                     <div>
@@ -55,7 +59,7 @@ const ChatBox = () => {
                 <div className='p-5 h-[90%] overflow-auto'>
                     {messages && messages?.map((message, index) => {
                         return <div key={index} ref={scrollRef} >
-                            <ChatMessages isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} message={message?.text} />
+                            <ChatMessages onDelete={() => deleteHandler(message)} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} message={message?.text} />
                         </div>
                     })}
 

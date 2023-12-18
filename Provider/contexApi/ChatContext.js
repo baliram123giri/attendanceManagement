@@ -176,7 +176,7 @@ export const ChatContexProvider = ({ children }) => {
 
 
 
-    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, onlineUsers, notifications, setNotifications }}>
+    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages,setMessages, onlineUsers, notifications, setNotifications }}>
         {children}
     </ChatContex.Provider>
 }
