@@ -3,6 +3,8 @@ import React, { useContext } from 'react'
 import { IoIosNotifications } from 'react-icons/io'
 import { GoBell } from "react-icons/go";
 import { usePathname, useRouter } from 'next/navigation';
+import moment from 'moment';
+import { momentTime } from '@/utils/utils';
 const Notification = () => {
     const { replace } = useRouter()
     const pathname = usePathname()
@@ -15,19 +17,20 @@ const Notification = () => {
         //redirect chats page
         replace("/chats")
     }
+    console.log(notifications)
     return (
-        <div>
-            <div className='relative'>
-                {count > 0 && <div className='absolute -top-[5px] -right-[5px] bg-main-app-secondary w-4 h-4 rounded-full flex text-[8px] justify-center items-center text-white'>
+        <div className='h-full '>
+            <div className='relative group  h-full flex justify-center items-center'>
+                {count > 0 && <div className='absolute top-[10px] -right-[5px]  bg-main-app-secondary w-4 h-4 rounded-full flex text-[8px] justify-center items-center text-white'>
                     {count}
                 </div>}
                 <IoIosNotifications size={25} />
-                <div className={`${count ? "" : "hidden"} absolute top-[50px] z-10 border min-w-[300px] -left-[150px] bg-white shadow-sm`}>
+                <div className={`${count ? "" : "hidden"} hidden group-hover:block absolute top-[65px] z-10 border min-w-[300px] -left-[150px] bg-white shadow-sm `}>
                     <div className='flex gap-1 p-3 px-5 items-center  border-b pb-2'>
                         <GoBell size={13} />
                         <h6 className='text-xs font-bold'>Notifications({count})</h6>
                     </div>
-                    <ul>
+                    <ul className='max-h-[200px]  overflow-auto users_messages'>
                         {
                             unreadNotifications?.map((ele, index) => {
                                 return <li onClick={() => updatedChat(ele)} key={index} className=' text-xs p-3  border-b py-2 flex gap-3 items-start hover:bg-main-app-secondary hover:text-white'>
@@ -35,7 +38,8 @@ const Notification = () => {
                                         <IoIosNotifications size={20} />
                                     </div>
                                     <div className=' flex-1'>
-                                        <p className='font-semibold pe-1'>{ele?.senderId?.name}</p>
+                                        <p className='font-semibold pe-1 flex justify-between items-center '>{ele?.senderId?.name}  <span className='text-[9px] font-bold'>{momentTime(ele?.createdAt)}</span></p>
+
                                         <p className='text-[10px]'>{ele?.text}</p>
                                     </div>
                                 </li>

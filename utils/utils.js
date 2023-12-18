@@ -1,4 +1,5 @@
 import axios from "axios"
+import moment from "moment"
 import { toast } from "react-toastify"
 import { io } from "socket.io-client"
 
@@ -69,4 +70,33 @@ export function getTimeAndDate(type = "date", date = new Date(), locale = "en-IN
 
         return timeFormat;
     }
+}
+
+
+//get notification time
+
+export const momentTime = (createdAt) => {
+    // Get the current date
+    const currentDate = moment();
+    // Get the date of the provided timestamp
+    const createdAtDate = moment(createdAt);
+
+    // Calculate the difference in days
+    const daysDifference = currentDate.diff(createdAtDate, 'days');
+
+    // Define the format string based on the age of the date
+    let formatString = '';
+
+    if (daysDifference === 0) {
+        // Today
+        formatString = 'h:mm A';
+    } else if (daysDifference === 1) {
+        // Yesterday
+        formatString = '[Yesterday at] h:mm A';
+    } else {
+        // More than 1 day ago
+        formatString = 'MMM D [at] h:mm A';
+    }
+    const formattedTime = createdAtDate.format(formatString);
+    return formattedTime
 }

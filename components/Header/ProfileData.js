@@ -9,7 +9,7 @@ const ProfileData = () => {
 
     if (!session) return null
     return (
-        <div className='cursor-pointer flex items-center gap-2  relative '>
+        <div className='cursor-pointer flex items-center gap-2 h-full  relative '>
             <Notification />
 
 

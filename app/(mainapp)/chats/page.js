@@ -8,7 +8,7 @@ export const metadata = {
 const Chats = () => {
     return (
         <section className='flex h-[85vh]'>
-            <div className='flex-0 w-[20%] min-h-full  bg-white border-r-2'>
+            <div className='flex-0 w-[300px] min-h-full  bg-white border-r-2'>
                 <Users />
             </div>
             <div className='flex-1 bg-[#E7EBEF] h-full'>

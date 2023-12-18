@@ -94,7 +94,7 @@ export const ChatContexProvider = ({ children }) => {
                 sound.play()
             }
             if ((!isChatOpen || pathname !== "/chats") && (user?._id === res?.receiverId)) {
-                setNotifications((prev) => [...prev, res])
+                setNotifications((prev) => [res, ...prev])
             }
         })
         return () => {

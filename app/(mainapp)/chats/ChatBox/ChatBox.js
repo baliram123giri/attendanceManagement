@@ -13,6 +13,7 @@ import { useFecthRecipientUser } from '@/hooks/useFecthRecipient'
 import { AuthContext } from '@/Provider/contexApi/AuthContext'
 
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader'
+import { FaUserCircle } from 'react-icons/fa'
 
 const ChatBox = () => {
     const { currentChat, sendMessage, messages, onlineUsers } = useContext(ChatContex)
@@ -34,12 +35,13 @@ const ChatBox = () => {
     return (
         <div className='h-full'>
             <div className={`flex items-center gap-3 py-2 border-t cursor-pointer w-full bg-white  px-2`}>
-                <Image className='shadow' style={{ borderRadius: "50%", height: 50, width: 50 }} src={avatar3} alt='avatar' />
+                { <FaUserCircle className='text-gray-400 mb-1' size={40} />}
+                {/* <Image className='shadow' style={{ borderRadius: "50%", height: 50, width: 50 }} src={avatar3} alt='avatar' /> */}
                 <div className='flex justify-between w-full'>
                     <div>
                         <h6 className='font-semibold leading-none'>{recipientUser?.name}</h6>
                         {isOnline ? <div className='flex items-center mt-1 gap-1'>
-                            <div className="h-2 w-2 rounded-full bg-main-app-error animate-pulse"></div>
+                            <div className="h-2 w-2 rounded-full bg-main-app-primary animate-pulse"></div>
                             <small className='text-[11px] leading-none'>Online</small>
                         </div> : <small className='text-[11px] leading-none'>Offline</small>}
 
