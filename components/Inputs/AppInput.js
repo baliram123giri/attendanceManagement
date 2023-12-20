@@ -69,7 +69,7 @@ const AppInput = ({
           {label && <MyLabel name={name} label={label} required={required} />}
           <input
             disabled={disabled}
-            className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full'
+            className='bg-white/5 text-xs rounded-sm  border focus:outline-none px-2 p-2 w-full'
             type={type}
             placeholder={placeholder}
             {...register(name, { onChange: (e) => onChange && onChange(e) })}
