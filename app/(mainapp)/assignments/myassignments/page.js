@@ -1,25 +1,16 @@
 import React from 'react'
-import Form from './SubmitForm/Form'
-import AssigmentCards from './AssigmentCards'
+import Link from 'next/link'
+import AppButton from '@/components/Buttons/AppButton'
+import { FaPlus, FaPlusCircle } from 'react-icons/fa'
+import AssignmentList from './AssignmentList'
 
 const MyAssignments = () => {
   return (
     <section className='bg-white p-2'>
-      <Form />
-      <div className='flex items-center justify-between flex-wrap'>
-        <div className='w-full lg:w-[24.5%] my-2'>
-          <AssigmentCards />
-        </div>
-        <div className='w-full lg:w-[24.5%] my-2'>
-          <AssigmentCards />
-        </div>
-        <div className='w-full lg:w-[24.5%] my-2'>
-          <AssigmentCards />
-        </div>
-        <div className='w-full lg:w-[24.5%] my-2'>
-          <AssigmentCards />
-        </div>
+      <div className='text-end'>
+        <Link href={"/assignments/myassignments/add"}> <AppButton> <div className="flex items-center gap-1"> ADD <FaPlusCircle /></div></AppButton></Link>
       </div>
+      <AssignmentList />
     </section>
   )
 }

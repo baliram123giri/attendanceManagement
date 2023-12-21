@@ -65,7 +65,7 @@ const AppInput = ({
     //defualt
     default:
       return (
-        <div className="flex flex-col gap-1 w-full">
+        <div className="flex flex-col gap-1 w-full text-sm">
           {label && <MyLabel name={name} label={label} required={required} />}
           <input
             disabled={disabled}
