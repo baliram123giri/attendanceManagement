@@ -17,7 +17,7 @@ const Notification = () => {
         //redirect chats page
         replace("/chats")
     }
-    console.log(notifications)
+
     return (
         <div className='h-full '>
             <div className='relative group  h-full flex justify-center items-center'>

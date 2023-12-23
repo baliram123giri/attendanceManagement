@@ -6,10 +6,11 @@ import AssignmentList from './AssignmentList'
 
 const MyAssignments = () => {
   return (
-    <section className='bg-white p-2'>
-      <div className='text-end'>
-        <Link href={"/assignments/myassignments/add"}> <AppButton> <div className="flex items-center gap-1"> ADD <FaPlusCircle /></div></AppButton></Link>
+    <section className='bg-white p-2 '>
+      <div className='flex gap-1 flex-wrap items-center bg-white p-2 text-sm shadow font-semibold '>
+        <h6>My Assignments</h6> <Link href={"/assignments/myassignments/add"}>  <div className="flex items-center gap-1 border-main-app-secondary border p-1 text-main-app-secondary rounded-full"> <FaPlusCircle /></div></Link>
       </div>
+
       <AssignmentList />
     </section>
   )

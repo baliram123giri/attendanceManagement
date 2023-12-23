@@ -19,6 +19,7 @@ const AttendanceCalendar = ({ attendanceData = [
   },
   // Add more objects as needed
 ] }) => {
+  
   const [startDate, setStartDate] = useState(new Date());
 
   const generateDateArray = (start) => {
@@ -73,7 +74,7 @@ const AttendanceCalendar = ({ attendanceData = [
                 <td key={columnIndex}>
                   <span className={`check-icon ${row.attendance[date] ? 'present' : 'absent'}`}>
                     {row.attendance[date] ? '\u2713' : '\u2717'}
-                  </span>
+                  </span> 
                 </td>
               ))}
               <td>{row.time}</td>

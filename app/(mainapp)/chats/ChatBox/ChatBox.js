@@ -18,6 +18,7 @@ import { FaUserCircle } from 'react-icons/fa'
 const ChatBox = () => {
     const { currentChat, sendMessage, messages, onlineUsers, setMessages } = useContext(ChatContex)
     const { user } = useContext(AuthContext)
+    const [file, setFile] = useState(null)
     const { isLoading, recipientUser } = useFecthRecipientUser(currentChat, user)
     const [textMessage, setTextMessage] = useState("")
     const scrollRef = useRef(null)
@@ -32,6 +33,8 @@ const ChatBox = () => {
     const deleteHandler = (message) => {
         setMessages(messages?.filter(({ _id }) => message?._id !== _id))
     }
+
+    console.log(file)
     if (!currentChat) return null
     if (isLoading) return <div style={{ background: `url(${chatbg.src})`, backgroundSize: 300, backgroundColor: " rgba(255, 255, 255, 0.2)" }} className='flex justify-center items-center h-full'><RotateLoader /></div>
     const isOnline = onlineUsers?.find(({ userId }) => userId === currentChat?.members[1])
@@ -59,16 +62,19 @@ const ChatBox = () => {
                 <div className='p-5 h-[90%] overflow-auto'>
                     {messages && messages?.map((message, index) => {
                         return <div key={index} ref={scrollRef} >
-                            <ChatMessages onDelete={() => deleteHandler(message)} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} message={message?.text} />
+                            <ChatMessages onDelete={() => deleteHandler(message)} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} docs={message?.docs} message={message?.text} />
                         </div>
                     })}
 
                 </div>
                 <div className='absolute bottom-0 w-full left-0 bg-white flex items-center'>
+                    <div className=''>
+                        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+                    </div>
                     <div className='flex-1'>
                         <InputEmoji value={textMessage} onChange={setTextMessage} cleanOnEnter />
                     </div>
-                    <div onClick={() => sendMessage(textMessage, currentChat?._id, currentChat?.members?.filter((id) => id !== user?._id)[0], user?._id, setTextMessage)} className=' me-3 ps-1.5 cursor-pointer h-11  flex justify-center items-center text-main-app-error rounded-full'>
+                    <div onClick={() => sendMessage(textMessage, currentChat?._id, currentChat?.members?.filter((id) => id !== user?._id)[0], user?._id, setTextMessage, file, setFile)} className=' me-3 ps-1.5 cursor-pointer h-11  flex justify-center items-center text-main-app-error rounded-full'>
                         <IoMdSend size={25} />
                     </div>
                 </div>

@@ -48,9 +48,8 @@ const Calendar = () => {
 
   //  console.log(new Date("2023-10-11T18:30:00.000Z").toLocaleDateString("en-US"))
   function findFunctionAndUpdate(renderedDate) {
-
     const result = data?.find(({ date }) => {
-      return new Date(date).toLocaleDateString("en-US") === renderedDate
+      return date === renderedDate
     })
     return result
   }

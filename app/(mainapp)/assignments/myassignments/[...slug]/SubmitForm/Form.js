@@ -1,30 +1,56 @@
 "use client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { addAsignments } from "./validation";
 import AppInput from "@/components/Inputs/AppInput";
 import AppButton from "@/components/Buttons/AppButton";
 import { useMutation } from "@tanstack/react-query";
-import { myAxios, statusHandler } from "@/utils/utils";
+import { myAxios, setValues, statusHandler } from "@/utils/utils";
 import MyLabel from "@/components/Texts/MyLabel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import PageLoader from "@/components/LoadingSpinner/PageLoader";
+import Image from "next/image";
 
-const Form = () => {
+const Form = ({ editId }) => {
     const { replace } = useRouter()
+
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue,
         trigger,
-    } = useForm({ resolver: yupResolver(addAsignments) });
+    } = useForm({ resolver: yupResolver(addAsignments(editId)) });
 
+    //edit
+    const { isLoading: isLoadingEditAssignment, mutate: mutateEditAssignment, data: editData } = useMutation(async () => {
+        const { data } = await myAxios.get(`/assignment/${editId}`)
+        return data
+    }, {
+        ...statusHandler(), onSuccess(data) {
+            setValues(setValue, data)
+        }
+    })
 
-
+    //create
     const { mutate: mutateAssignmetUpload, isLoading: isLoadingAssignmetUpload } = useMutation(async (value) => {
         const { data } = await myAxios.post(`/assignment/create`, value, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+        return data
+    }, {
+        ...statusHandler(), onSuccess() {
+            replace("/assignments/myassignments")
+        }
+    })
+
+    //update
+    const { mutate: mutateAssignmetUpdate, isLoading: isLoadingAssignmetUpdate } = useMutation(async (value) => {
+        const { data } = await myAxios.put(`/assignment/update/${editId}`, value, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -44,7 +70,14 @@ const Form = () => {
         formData.append("netlifyUrl", netlifyUrl)
         formData.append("thumbnail", thumbnail[0])
         formData.append("title", title)
-        mutateAssignmetUpload(formData)
+
+        //create
+        if (!editId) {
+            mutateAssignmetUpload(formData)
+        } else {
+            //update
+            mutateAssignmetUpdate(formData)
+        }
 
     };
 
@@ -80,6 +113,17 @@ const Form = () => {
         const file = event.target.files[0];
         setValue('thumbnail', file);
     };
+
+    //edit 
+    useEffect(() => {
+        if (editId) {
+            mutateEditAssignment()
+        }
+    }, [editId, mutateEditAssignment])
+
+
+    if (isLoadingEditAssignment && editId) return <PageLoader />
+
     return <form onSubmit={handleSubmit(onSubmit)} className="w-full lg:w-[50%] mx-auto p-4  bg-white shadow rounded-md">
         <h6 className="text-center font-semibold text-main-xl border-b-2 pb-2 border-main-app-secondary inline-block mx-auto">Add New Assignment</h6>
         <div className="flex items-center justify-between lg:py-6 flex-wrap">
@@ -93,10 +137,14 @@ const Form = () => {
                     <span className="text-xs text-red-600  mt-2">{errors["thumbnail"].message}</span>
                 )}
             </div>
+
             <div className="flex flex-wrap gap-2">
-                <AppButton isLoading={isLoadingAssignmetUpload}>ADD ASSIGNMENT</AppButton>
+                <AppButton isLoading={isLoadingAssignmetUpload || isLoadingAssignmetUpdate}>{editId ? "UPDATE" : "ADD"} ASSIGNMENT</AppButton>
                 <Link href={"/assignments/myassignments"}><AppButton color="bg-main-app-primary">CANCEL</AppButton></Link>
             </div>
+            {editData && <div className="w-14 h-14 border rounded-md relative flex-2">
+                <Image src={editData?.thumbnail} layout="fill" objectFit="cover" alt="thumbnail" />
+            </div>}
         </div>
     </form>;
 };

@@ -25,10 +25,8 @@ export default function MainLayout({ children }) {
           <Header />
           <main className='w-full flex h-[90vh]'>
             <Aside />
-            <div className='flex-1 h-full p-4 bg-gray-100 overflow-auto '>
-              <Suspense fallback={<p>Loading...</p>}>
-                {children}
-              </Suspense>
+            <div className='flex-1 h-full p-4 bg-gray-100 overflow-auto users_messages '>
+              {children}
             </div>
           </main>
         </ReduxStore>

@@ -146,16 +146,26 @@ export const ChatContexProvider = ({ children }) => {
 
     //send message
     const sendMessage = useCallback(
-        async (text, chatId, receiverId, senderId, setTextMessage) => {
+        async (text, chatId, receiverId, senderId, setTextMessage, file, setFile) => {
             try {
-                const { data } = await myAxios.post(`/messages`, {
-                    text,
-                    chatId,
-                    senderId,
-                    receiverId
+                const formData = new FormData()
+                formData.append("text", text)
+                formData.append("chatId", chatId)
+                formData.append("senderId", senderId)
+                formData.append("receiverId", receiverId)
+
+                if (file) {
+                    formData.append("docs", file)
+                }
+
+                const { data } = await myAxios.post(`/messages`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
                 });
                 setTextMessage("");
                 setNewMessage(data)
+                setFile(null)
                 return data;
             } catch (error) {
                 console.log(error.response);
@@ -177,7 +187,7 @@ export const ChatContexProvider = ({ children }) => {
 
 
 
-    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages,setMessages, onlineUsers, notifications, setNotifications }}>
+    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, setMessages, onlineUsers, notifications, setNotifications }}>
         {children}
     </ChatContex.Provider>
 }

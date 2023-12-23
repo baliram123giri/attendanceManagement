@@ -26,4 +26,5 @@ module.exports = {
   images: {
     domains: ['res.cloudinary.com'], // Add your image domain(s) here
   },
+  reactStrictMode: false,
 };

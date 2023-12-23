@@ -37,6 +37,11 @@ export function statusHandler() {
     }
 }
 
+export function setValues(setValue, values) {
+    for (const key in values) {
+        setValue(key, values[key] === "" ? null : values[key])
+    }
+}
 
 // export function getTimeAndDate(type = "date", date = new Date()) {
 //     if (type === "date") {
