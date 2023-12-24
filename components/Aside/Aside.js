@@ -13,6 +13,7 @@ import { MdAssignment } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import { useSession } from "next-auth/react"
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { CiSettings } from "react-icons/ci";
 const Aside = () => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -54,6 +55,11 @@ const Aside = () => {
         key: "/chats",
         lable: "Chats",
         icon: <IoChatbubblesOutline size={25} />
+    },
+    {
+        key: "/settings",
+        lable: "Settings",
+        icon: <CiSettings  size={25} />
     },
     ]
 

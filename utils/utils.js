@@ -105,3 +105,45 @@ export const momentTime = (createdAt) => {
     const formattedTime = createdAtDate.format(formatString);
     return formattedTime
 }
+
+export function getFiletype(b64 = "") {
+    const fileType = b64?.split(";")[0]
+    switch (fileType) {
+        case 'data:image/jpeg':
+            return "image"
+        case "data:image/png":
+            return "image"
+        case "data:image/jpg":
+            return "image"
+        case "data:application/pdf":
+            return "pdf"
+        default:
+            return false
+    }
+}
+
+export const downloadImage = async (imageUrl, name) => {
+    try {
+        const response = await fetch(imageUrl);
+
+        if (!response.ok) {
+            throw new Error('Failed to download image');
+        }
+
+        // const contentType = response.headers.get('content-type');
+        // const extension = contentType.split('/')[1];
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading image:', error.message);
+    }
+};

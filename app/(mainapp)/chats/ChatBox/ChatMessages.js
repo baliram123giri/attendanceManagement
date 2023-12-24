@@ -1,26 +1,46 @@
-import { momentTime } from '@/utils/utils';
+import { downloadImage, momentTime } from '@/utils/utils';
 import Image from 'next/image';
-import React from 'react'
+import React, { useState } from 'react'
 
 import { BiCheckDouble } from "react-icons/bi";
 import { FaDeleteLeft } from 'react-icons/fa6';
-
-
-const ChatMessages = ({ receiver = false, message, time, docs, isSeen = false, onDelete }) => {
+import { LiaDownloadSolid } from "react-icons/lia";
+import pdfIcon from "@/public/pdf.png"
+import { BiImage } from "react-icons/bi";
+import NoPreview from '@/components/Preview/NoPreview';
+import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
+const ChatMessages = ({ receiver = false, message, time, docs, docsName, isSeen = false, onDelete }) => {
     const isPdf = docs ? docs?.split(".")[3] : false
-    console.log(isPdf)
+    const [isDownloading, setIsDownloading] = useState(false)
+    const downloadHandler = (ele) => {
+        setIsDownloading(true)
+        downloadImage(docs, docsName).then(() => setIsDownloading(false))
+    }
+
     return (
         <div className={`chat_message ${receiver ? "" : "ms-auto"}`}>
-            <div className={`${receiver ? "bg-white rounded-xl rounded-bl-none" : "bg-main-app-error   rounded-bl-md rounded-tr-md text-white"} mt-5  p-2 py-3   text-xs relative group`}>
-                {docs && isPdf === "png" && <div style={{ width: '100%', height: '180px', position: 'relative' }}>
+            <div className={`${receiver ? "bg-white rounded-xl rounded-bl-none" : "bg-main-app-error   rounded-bl-md rounded-tr-md text-white"} mt-5    text-xs relative group`}>
+                {docs && isPdf !== "pdf" && <div style={{ minWidth: '300px', height: '180px', position: 'relative' }}>
                     <Image layout='fill'
-                        objectFit='cover' className='object-cover rounded-t-md border-b' src={docs} alt={`docs_${docs}`} />
+                        objectFit='cover' className='object-cover rounded-t-md border-main-app-error border-2' src={docs} alt={`docs_${docs}`} />
                 </div>}
-                {docs && isPdf === "pdf" && <div style={{ width: '100%', height: '180px', position: 'relative' }}>
-                    <iframe src={docs} frameborder="0"></iframe>
+                {docs && isPdf === "pdf" && <div style={{ minWidth: 300, height: '180px', position: 'relative' }} className=' border-main-app-error border-2'>
+                    <NoPreview />
                 </div>}
+                {docsName && <div className='flex items-center justify-between p-2 bg-green-300/20'>
+                    <div className='flex items-center gap-2 p-2'>
+                        {isPdf !== "pdf" ? <BiImage size={30} /> : <Image width={30} quality={100} src={pdfIcon} alt='pdficons' />}
 
-                {message}
+                        <span>{docsName}</span>
+                    </div>
+                    <div onClick={downloadHandler} className='w-6 h-6 border flex items-center justify-center rounded-full cursor-pointer'>
+                        {isDownloading ? <RotateLoader width={15} /> : <LiaDownloadSolid size={18} />}
+                    </div>
+                </div>}
+                {message && <p className='p-2'>
+                    {message}
+                </p>}
+
                 {!receiver && <div onClick={onDelete} className='absolute text-red-600 top-0 -right-[10px] cursor-pointer hidden group-hover:block'>
                     <FaDeleteLeft size={18} />
                 </div>}

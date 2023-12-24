@@ -10,6 +10,7 @@ export const ChatContex = createContext()
 export const ChatContexProvider = ({ children }) => {
     const pathname = usePathname()
     const { user, usersList } = useContext(AuthContext)
+    const [sendMessageLoading, setSendMessageLoading] = useState(false)
     const sound = new Howl({
         src: [notificationSound],
     });
@@ -147,6 +148,7 @@ export const ChatContexProvider = ({ children }) => {
     //send message
     const sendMessage = useCallback(
         async (text, chatId, receiverId, senderId, setTextMessage, file, setFile) => {
+            setSendMessageLoading(true)
             try {
                 const formData = new FormData()
                 formData.append("text", text)
@@ -156,6 +158,7 @@ export const ChatContexProvider = ({ children }) => {
 
                 if (file) {
                     formData.append("docs", file)
+                    formData.append("docsName", file?.name)
                 }
 
                 const { data } = await myAxios.post(`/messages`, formData, {
@@ -169,6 +172,8 @@ export const ChatContexProvider = ({ children }) => {
                 return data;
             } catch (error) {
                 console.log(error.response);
+            } finally {
+                setSendMessageLoading(false)
             }
         },
         []
@@ -185,9 +190,7 @@ export const ChatContexProvider = ({ children }) => {
 
 
 
-
-
-    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, setMessages, onlineUsers, notifications, setNotifications }}>
+    return <ChatContex.Provider value={{ CreateChat, usersChat, updateChat: setCurrentChat, currentChat, sendMessage, messages, setMessages, onlineUsers, notifications, setNotifications, sendMessageLoading }}>
         {children}
     </ChatContex.Provider>
 }
