@@ -36,7 +36,7 @@ const Users = () => {
 
             <div className='my-2 mt-5 h-full overflow-auto users_messages' >
                 {usersChat?.length > 0 && usersChat?.map((chat, index) => {
-                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard isActive={currentChat?._id === chat?._id} chat={chat} user={user} imgSrc={false} message={"When will it be ready?"} username={"Baliram Giri"} /></div>
+                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard isActive={currentChat?._id === chat?._id} chat={chat} user={user}  message={"When will it be ready?"} username={"Baliram Giri"} /></div>
                 })}
             </div>
         </div>

@@ -91,11 +91,10 @@ const ChatBox = () => {
     return (
         <div className='h-full'>
             <div className={`flex items-center gap-3 py-2 border-t cursor-pointer w-full bg-white  px-2`}>
-                {<FaUserCircle className='text-gray-400 mb-1' size={40} />}
-                {/* <Image className='shadow' style={{ borderRadius: "50%", height: 50, width: 50 }} src={avatar3} alt='avatar' /> */}
-                <div className='flex justify-between w-full'>
+                {recipientUser?.avatar ? <div className='relative w-[40px] p-1 h-[40px] border-2  rounded-full'><Image layout='fill' src={recipientUser?.avatar} alt='avatar' /> </div> : <FaUserCircle className='text-gray-400' size={40} />}
+                <div className='flex justify-between w-full mt-1'>
                     <div>
-                        <h6 className='font-semibold leading-none'>{recipientUser?.name}</h6>
+                        <h6 className='font-semibold leading-none'>{recipientUser?.name || "Unknown User"}</h6>
                         {isOnline ? <div className='flex items-center mt-1 gap-1'>
                             <div className="h-2 w-2 rounded-full bg-main-app-primary animate-pulse"></div>
                             <small className='text-[11px] leading-none'>Online</small>
@@ -107,7 +106,7 @@ const ChatBox = () => {
                     </div>
                 </div>
             </div>
-            <div className='h-[91%]  w-full relative ' style={{ background: `url(${chatbg.src})`, backgroundSize: 300, backgroundColor: " rgba(255, 255, 255, 0.2)" }}>
+            <div className='h-[91%]   w-full relative ' style={{ background: `url(${chatbg.src})`, backgroundSize: 300, backgroundColor: " rgba(255, 255, 255, 0.2)" }}>
 
                 {file && <div className='h-full bg-gray-100 w-full py-3  z-20 border-2 absolute top-0'>
                     <div className='flex items-center'>
@@ -138,7 +137,7 @@ const ChatBox = () => {
                     </div>
 
                 </div>}
-                <div className='p-5 h-[90%] overflow-auto'>
+                <div className='p-5 h-[90%]  users_messages overflow-auto'>
                     {messages && messages?.map((message, index) => {
                         return <div key={index} ref={scrollRef} >
                             <ChatMessages onDelete={() => deleteHandler(message)} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} docs={message?.docs} docsName={message?.docsName} message={message?.text} />

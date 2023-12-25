@@ -71,8 +71,9 @@ const Form = () => {
                     {loader ? <LoadingSpinner /> : "Login"}
                 </button>
             </div>
-            <div className='text-xs text-center'>
-                <span>{`Don't Have Account?`}</span> <Link className='text-main-app-secondary hover:text-main-app-secondary/90' href={"/register"}>Sign Up</Link>
+            <div className='text-xs text-center flex justify-between flex-wrap'>
+                <div>                <span>{`Don't Have Account?`}</span> <Link className='text-main-app-secondary hover:text-main-app-secondary/90' href={"/register"}>Sign Up</Link></div>
+                <Link className='text-main-app-error hover:text-main-app-secondary/90' href={"/forgetpassword"}>Forget Password</Link>
             </div>
         </form>
     )

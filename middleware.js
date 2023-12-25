@@ -12,7 +12,7 @@ export async function middleware(request) {
         return path.includes(request.nextUrl.pathname) && accessToken
     }
 
-    const authRoute = request.nextUrl.pathname === "/login"
+    const authRoute = request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/forgetpassword"
     const session = await getToken({ req: request, secret: process.env.COOKIE_SECRET });
     const isAdmin = session?.data?.role === "admin"
 
@@ -42,6 +42,6 @@ export async function middleware(request) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/login", "/", "/meeting", "/attendance/:path*", "/classes", "/assignments/:path*", "/students"],
+    matcher: ["/login", "/forgetpassword", "/", "/meeting", "/chats", "/settings", "/attendance/:path*", "/classes", "/assignments/:path*", "/students"],
 }
 

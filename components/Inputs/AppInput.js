@@ -15,19 +15,22 @@ const AppInput = ({
   options = [],
   onCheck = false,
   onChange = false,
+  endIcon = false,
+  edit = true,
+  watch
 }) => {
   switch (type) {
     //select
     case "select":
       return (
-        <div className="flex flex-col gap-1 ">
+        <div className="flex flex-col gap-1 text-xs">
           {label && <MyLabel name={name} label={label} required={required} />}
-          <select
+          {edit ? <select
             disabled={disabled}
-            className={`border rounded-md p-1.5 w-full`}
+            className={`border rounded-sm p-2 px-1 w-full text-gray-600 focus:outline-none`}
             {...register(name, { onChange: (e) => onSelect && onSelect(e) })}
           >
-            <option value="">{`Select ${label || ""}`}</option>
+            <option value="">{`Select ${placeholder || ""}`}</option>
             {Array.isArray(options) &&
               options.map((ele, i) => {
                 return (
@@ -36,7 +39,7 @@ const AppInput = ({
                   </option>
                 );
               })}
-          </select>
+          </select> : <span>{(watch && watch(name)) || "Na"}</span>}
           {errors?.[name] && (
             <span className="text-xs text-red-600">{errors[name].message}</span>
           )}
@@ -67,13 +70,17 @@ const AppInput = ({
       return (
         <div className="flex flex-col gap-1 w-full text-sm">
           {label && <MyLabel name={name} label={label} required={required} />}
-          <input
-            disabled={disabled}
-            className='bg-white/5 text-xs rounded-sm  border focus:outline-none px-2 p-2 w-full'
-            type={type}
-            placeholder={placeholder}
-            {...register(name, { onChange: (e) => onChange && onChange(e) })}
-          />
+          {edit ? <div className="flex items-center gap-1  rounded-sm  border">
+            <input
+              disabled={disabled}
+              className='bg-white/5 text-xs focus:outline-none px-2 p-2 w-full'
+              type={type}
+              placeholder={placeholder}
+              {...register(name, { onChange: (e) => onChange && onChange(e) })}
+            />
+            {endIcon}
+          </div> : <span>{(watch && watch(name)) || "Na"}</span>
+          }
           {errors?.[name] && (
             <span className="text-xs text-red-400">{errors[name].message}</span>
           )}

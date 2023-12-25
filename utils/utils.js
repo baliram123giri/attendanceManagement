@@ -147,3 +147,8 @@ export const downloadImage = async (imageUrl, name) => {
         console.error('Error downloading image:', error.message);
     }
 };
+
+export const isJwt = (str) => {
+    const jwtPattern = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/=]*$/;
+    return jwtPattern.test(str);
+  };
