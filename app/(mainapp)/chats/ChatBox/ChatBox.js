@@ -18,6 +18,7 @@ import { GrAttachment } from "react-icons/gr";
 import { IoClose } from 'react-icons/io5'
 import { getFiletype } from '@/utils/utils'
 import { toast } from 'react-toastify'
+import ChatTools from './ChatTools'
 const ChatBox = () => {
     const { currentChat, sendMessage, messages, onlineUsers, setMessages, sendMessageLoading } = useContext(ChatContex)
     const { user } = useContext(AuthContext)
@@ -90,9 +91,9 @@ const ChatBox = () => {
     const isSendBtn = (textMessage || file)
     return (
         <div className='h-full'>
-            <div className={`flex items-center gap-3 py-2 border-t cursor-pointer w-full bg-white  px-2`}>
+            <div className={`flex items-center gap-3  border-t cursor-pointer w-full bg-white  px-2`}>
                 {recipientUser?.avatar ? <div className='relative w-[40px] p-1 h-[40px] border-2  rounded-full'><Image layout='fill' src={recipientUser?.avatar} alt='avatar' /> </div> : <FaUserCircle className='text-gray-400' size={40} />}
-                <div className='flex justify-between w-full mt-1'>
+                <div className='flex justify-between items-center w-full '>
                     <div>
                         <h6 className='font-semibold leading-none'>{recipientUser?.name || "Unknown User"}</h6>
                         {isOnline ? <div className='flex items-center mt-1 gap-1'>
@@ -101,9 +102,16 @@ const ChatBox = () => {
                         </div> : <small className='text-[11px] leading-none'>Offline</small>}
 
                     </div>
-                    <div className='w-10 h-10 flex justify-center items-center border border-gray-200 p-1 rounded-full '>
-                        <IoIosMore size={25} className='text-gray-400 cursor-pointer' />
+                    <div className='group  relative py-2 min-w-[100px] flex justify-end '>
+                        <div className='w-10 h-10 flex justify-center items-center  border border-gray-200 p-1 rounded-full  '>
+                            <IoIosMore size={25} className='text-gray-400 cursor-pointer' />
+
+                        </div>
+                        <div className='bg-white right-[0px] -bottom-[100px] hidden group-hover:block z-10 w-[130px] absolute shadow-sm border rounded-sm'>
+                            <ChatTools />
+                        </div>
                     </div>
+
                 </div>
             </div>
             <div className='h-[91%]   w-full relative ' style={{ background: `url(${chatbg.src})`, backgroundSize: 300, backgroundColor: " rgba(255, 255, 255, 0.2)" }}>
@@ -140,7 +148,7 @@ const ChatBox = () => {
                 <div className='p-5 h-[90%]  users_messages overflow-auto'>
                     {messages && messages?.map((message, index) => {
                         return <div key={index} ref={scrollRef} >
-                            <ChatMessages onDelete={() => deleteHandler(message)} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} docs={message?.docs} docsName={message?.docsName} message={message?.text} />
+                            <ChatMessages  {...message} isSeen={message?.isRead} time={message?.createdAt} receiver={user?._id !== message?.senderId} docs={message?.docs} docsName={message?.docsName} message={message?.text} />
                         </div>
                     })}
 

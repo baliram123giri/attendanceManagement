@@ -62,9 +62,25 @@ export const ChatContexProvider = ({ children }) => {
                 setUsersChat((prev) => [...prev, newUserChat]);
             }
         };
+
+        //delete user chat
+        const handleDeleteChat = (id) => {
+
+            const isActiveChat = currentChat?._id === id
+            if (isActiveChat) {
+                setCurrentChat(null);
+            }
+            setUsersChat(usersChat?.filter(({ _id }) => _id !== id));
+        };
+
+
         socket.on("addChat", handAddUsersChat)
+        socket.on("deleteChat", handleDeleteChat)
+
+
         return () => {
             socket.off("addChat");
+            socket.off("deleteChat");
         };
     }, [user?._id, usersChat, currentChat, socket])
 
@@ -89,6 +105,12 @@ export const ChatContexProvider = ({ children }) => {
             }
         })
 
+        //delete message
+        socket.on("deleteMessage", (id) => {
+            setMessages(messages.filter(({ _id }) => _id !== id));
+            setNotifications(notifications.filter(({ _id }) => _id !== id))
+        })
+
         socket.on("getNotification", (res) => {
             const isChatOpen = currentChat?.members?.some(id => id === res?.senderId?._id)
             if ((pathname !== "/chats") && (user?._id === res?.receiverId)) {
@@ -102,9 +124,12 @@ export const ChatContexProvider = ({ children }) => {
             socket.off("getMessage")
 
             socket.off("getNotification")
+
+            socket.off("deleteMessage")
         }
 
     }, [socket, currentChat, pathname, sound, messages])
+
 
 
     useEffect(() => {

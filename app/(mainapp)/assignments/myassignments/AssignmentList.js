@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 "use client"
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
@@ -6,7 +7,8 @@ import React, { useEffect, useState } from 'react'
 import AssigmentCards from './AssigmentCards';
 import { myAxios } from '@/utils/utils';
 import { useInView } from 'react-intersection-observer';
-
+import notFoundImg from "@/public/assignment-not-found.png"
+import NotFound from '@/components/Notfound/NotFound';
 
 
 const AssignmentList = () => {
@@ -40,7 +42,9 @@ const AssignmentList = () => {
         }
     }, [inView, metaData?.totalPages, mutate])
 
-
+    if (!data?.length) {
+        return <NotFound image={notFoundImg} title={"Assignment not found"} />
+    }
     return (
         <>
             <div className={`flex flex-wrap gap-5  ${data?.length > 3 ? "justify-center" : ""}`}>

@@ -3,10 +3,11 @@ import { ChatContex } from '@/Provider/contexApi/ChatContext'
 import { useFecthRecipientUser } from '@/hooks/useFecthRecipient'
 import { momentTime } from '@/utils/utils';
 import Image from 'next/image'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaUserCircle } from "react-icons/fa";
-const UserListCard = ({ avatar, isActive = false, chat, user }) => {
+let UserListCard = ({ avatar, isActive = false, chat, user, Search }) => {
     const { recipientUser } = useFecthRecipientUser(chat, user)
+    const [filterUser, setFilterUser] = useState()
     const { onlineUsers, setNotifications, notifications } = useContext(ChatContex)
     //remove notification
     const notificationRemove = () => {
@@ -14,6 +15,20 @@ const UserListCard = ({ avatar, isActive = false, chat, user }) => {
     }
     const userNotifications = notifications?.filter(({ chatId }) => chatId === chat?._id) || []
     const count = userNotifications?.length || 0
+
+    useEffect(() => {
+        const searchBounce = setTimeout(() => {
+            if (recipientUser.name?.toLowerCase().includes(Search?.toLowerCase())) {
+                setFilterUser(recipientUser)
+            } else {
+                setFilterUser(null)
+            }
+        }, 300)
+
+        return () => clearTimeout(searchBounce)
+    }, [Search, recipientUser])
+    //
+    if (!filterUser) return null
 
     return (
         <div onClick={notificationRemove} className={`flex items-center gap-3 py-2 border-t cursor-pointer ${isActive ? "bg-blue-300/20 border-r-2 border-r-blue-300/50" : "bg-white"}  hover:bg-gray-100 hover:border-r-2 hover:border-r-main-app-error px-2`}>

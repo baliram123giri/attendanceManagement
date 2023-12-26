@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IoIosMore } from "react-icons/io";
 import { LuSearch } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
@@ -12,7 +12,8 @@ import { AuthContext } from '@/Provider/contexApi/AuthContext';
 
 const Users = () => {
     const [open, setOpen] = useState(false)
-    const { usersList, user } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
+    const [Search, setSeacrh] = useState("")
     const { usersChat, updateChat, currentChat } = useContext(ChatContex)
 
     return (
@@ -26,7 +27,7 @@ const Users = () => {
                 {/* //serch box  */}
                 <div className='flex gap-1.5 my-3 text-xs flex-wrap items-center border p-1 px-1.5 border-gray-200 rounded-full'>
                     <LuSearch className='text-gray-400' size={20} />
-                    <input type="text" className='border-0 flex-1  p-1 focus:outline-none' placeholder='Search for chats' />
+                    <input onChange={(e) => setSeacrh(e.target.value)} value={Search} type="text" className='border-0 flex-1  p-1 focus:outline-none' placeholder='Search users from your chats...' />
                 </div>
                 <div onClick={() => setOpen(true)} className='flex gap-1.5 cursor-pointer my-2 text-white text-[13px] flex-wrap items-center justify-center border p-2 px-1.5 bg-main-app-error rounded-full'>
                     <FaPlus size={16} />
@@ -36,7 +37,7 @@ const Users = () => {
 
             <div className='my-2 mt-5 h-full overflow-auto users_messages' >
                 {usersChat?.length > 0 && usersChat?.map((chat, index) => {
-                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard isActive={currentChat?._id === chat?._id} chat={chat} user={user}  message={"When will it be ready?"} username={"Baliram Giri"} /></div>
+                    return <div onClick={() => { updateChat(chat) }} key={index}> <UserListCard Search={Search} isActive={currentChat?._id === chat?._id} chat={chat} user={user} message={"When will it be ready?"} username={"Baliram Giri"} /></div>
                 })}
             </div>
         </div>

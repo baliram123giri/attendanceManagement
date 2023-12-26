@@ -1,4 +1,4 @@
-import { downloadImage, momentTime } from '@/utils/utils';
+import { downloadImage, momentTime, myAxios, statusHandler } from '@/utils/utils';
 import Image from 'next/image';
 import React, { useState } from 'react'
 
@@ -9,13 +9,22 @@ import pdfIcon from "@/public/pdf.png"
 import { BiImage } from "react-icons/bi";
 import NoPreview from '@/components/Preview/NoPreview';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
-const ChatMessages = ({ receiver = false, message, time, docs, docsName, isSeen = false, onDelete }) => {
+import { useMutation } from '@tanstack/react-query';
+const ChatMessages = ({ receiver = false, message, _id, time, docs, docsName, isSeen = false }) => {
     const isPdf = docs ? docs?.split(".")[3] : false
     const [isDownloading, setIsDownloading] = useState(false)
     const downloadHandler = (ele) => {
         setIsDownloading(true)
         downloadImage(docs, docsName).then(() => setIsDownloading(false))
     }
+    const { isLoading: isLoadingDelete, mutate: mutateDelete } = useMutation(async () => {
+        const { data } = await myAxios.delete(`/messages/delete/${_id}`)
+        return data
+    }, {
+        ...statusHandler(), onSuccess() {
+        }
+    })
+
 
     return (
         <div className={`chat_message ${receiver ? "" : "ms-auto"}`}>
@@ -41,8 +50,8 @@ const ChatMessages = ({ receiver = false, message, time, docs, docsName, isSeen 
                     {message}
                 </p>}
 
-                {!receiver && <div onClick={onDelete} className='absolute text-red-600 top-0 -right-[10px] cursor-pointer hidden group-hover:block'>
-                    <FaDeleteLeft size={18} />
+                {!receiver && <div onClick={mutateDelete} className='absolute text-red-600 top-0 -right-[10px] cursor-pointer hidden group-hover:block'>
+                    {isLoadingDelete ? <RotateLoader width={15} /> : <FaDeleteLeft size={18} />}
                 </div>}
             </div>
             <p className='text-[10px] my-2 flex items-center gap-1'>
