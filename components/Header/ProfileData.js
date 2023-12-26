@@ -1,24 +1,37 @@
 "use client"
 import { useSession } from 'next-auth/react'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import LogoutBtn from './LogoutBtn'
 
 import Notification from './Notification';
-import Image from 'next/image';
-const ProfileData = () => {
-    const session = useSession()
 
-    if (!session) return null
+import { IoMdMenu } from "react-icons/io";
+import Aside from '../Aside/Aside';
+import UserData from './UserData';
+import { usePathname } from 'next/navigation';
+import { ChatContex } from '@/Provider/contexApi/ChatContext';
+const ProfileData = () => {
+    const [open, setOpen] = useState(false)
+    const pathname = usePathname()
+    useEffect(() => {
+        setOpen(false)
+    }, [pathname])
+    const { notifications } = useContext(ChatContex)
+    const unreadNotifications = notifications?.filter(({ isRead }) => isRead === false) || []
+    const count = pathname === "/chats" ? 0 : unreadNotifications?.length
     return (
-        <div className='cursor-pointer flex items-center gap-2 h-full  relative '>
-            <Notification />
-            {session?.data?.user?.avatar && <div className='w-7 h-7 relative'>
-                <Image src={session?.data?.user?.avatar} alt='avatar'  layout='fill' />
+        <>
+            <div className='lg:hidden'>
+                <IoMdMenu onClick={() => setOpen(true)} size={30} className='cursor-pointer' />
+                {open && <div className='absolute z-10 left-0 h-[110vh] bg-neutral-950/10 w-full top-0 lg:hidden'>
+                    <Aside count={count} open={open} setOpen={setOpen} />
+                </div>}
             </div>
-            }
-            <h6 className='font-semibold group hover:text-blue-400'>{session?.data?.user?.name}</h6>
-            <LogoutBtn />
-        </div>
+            <div className='lg:flex hidden'>
+                <UserData />
+            </div>
+        </>
+
 
     )
 }

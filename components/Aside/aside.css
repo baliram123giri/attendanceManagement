@@ -11,3 +11,16 @@
     width: 50px;
 }
 
+
+@media screen and (max-width:1021px) {
+    .asidebar {
+        width: 50%;
+        transition: width 0.3s;
+    }
+}
+@media screen and (max-width:667px) {
+    .asidebar {
+        width: 70%;
+        transition: width 0.3s;
+    }
+}

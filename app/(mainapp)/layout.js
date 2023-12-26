@@ -24,7 +24,9 @@ export default function MainLayout({ children }) {
         <ReduxStore>
           <Header />
           <main className='w-full flex lg:h-[90vh] h-[96vh]'>
-            <Aside />
+            <div className='lg:block hidden'>
+              <Aside />
+            </div>
             <div className='flex-1 h-full p-4 bg-gray-100 overflow-auto users_messages '>
               {children}
             </div>

@@ -111,7 +111,7 @@ const PasswordChange = ({ isRest = false, onSubmitCallback, Loading }) => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className={`w-full  ${!isRest ? "lg:w-[48%] border shadow-sm  mt-3 p-4  rounded-md" : ""}   `}
+            className={`w-full  ${!isRest ? "lg:w-[48%] border shadow-sm  mt-2 p-4  rounded-md" : ""}   `}
         >
             {!isRest && <h6 className="text-xl font-semibold">Change Password</h6>}
             <div className="flex items-center justify-between lg:py-4 flex-wrap">

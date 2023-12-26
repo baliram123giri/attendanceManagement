@@ -14,7 +14,9 @@ import { SiGooglemeet } from "react-icons/si";
 import { useSession } from "next-auth/react"
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { CiSettings } from "react-icons/ci";
-const Aside = () => {
+import { IoMdClose } from "react-icons/io";
+import Image from "next/image"
+const Aside = ({ count, open, setOpen }) => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
     const pathname = usePathname()
@@ -54,19 +56,29 @@ const Aside = () => {
     {
         key: "/chats",
         lable: "Chats",
-        icon: <IoChatbubblesOutline size={25} />
+        ...((open && count) ? { icon: <div className="relative"><IoChatbubblesOutline size={25} /> <div className="w-6 h-6 flex justify-center items-center rounded-full absolute left-[80px] -top-[5px] bg-main-app-error"><span className="text-xs text-white">{count}</span></div> </div> } : { icon: <IoChatbubblesOutline size={25} /> }),
     },
     {
         key: "/settings",
         lable: "Settings",
-        icon: <CiSettings  size={25} />
+        icon: <CiSettings size={25} />
     },
     ]
 
     return (
-        <aside className={` h-full asidebar ${asideBarToggle ? "" : "collapsed"} bg-main-app-primary flex flex-col justify-between`}>
+        <aside className={` h-full asidebar    ${asideBarToggle ? "" : "collapsed"} bg-main-app-primary flex flex-col justify-between `}>
             <div>
-                <div className="relative">
+                <div className="bg-white relative flex flex-col items-center py-2 lg:hidden">
+                    {session?.data?.user?.avatar && <div className='w-7 h-7 relative '>
+                        <Image src={session?.data?.user?.avatar} alt='avatar' layout='fill' className="rounded-full" />
+                    </div>
+                    }
+                    <h6 className='font-semibold group hover:text-blue-400'>{session?.data?.user?.name}</h6>
+                    <div onClick={() => setOpen(false)} className="absolute right-0 top-0 border rounded-md p-1 flex justify-center items-center">
+                        <IoMdClose size={30} />
+                    </div>
+                </div>
+                <div className="relative hidden lg:block">
                     <div
                         onClick={() => dispatch({ type: ASIDEBAR_TOGGLE })}
                         className="text-sm w-7 h-7 rounded-full cursor-pointer -right-2 top-0 absolute bg-main-app-secondary flex justify-center items-center text-white"
@@ -78,7 +90,7 @@ const Aside = () => {
                         )}
                     </div>
                 </div>
-                <ol className="pt-8">
+                <ol className="pt-0 lg:pt-8">
                     {Menu.map(({ key, icon, lable }) => (
                         <li className="mb-2" key={key}><Link href={key} className={`flex ${(pathname === key) || (`/${pathname?.split("/")[1]}` === key) ? "bg-main-app-secondary" : ""} items-center gap-2 ${asideBarToggle ? "" : "justify-center"} text-main-xl p-2 text-white`}>{icon} {asideBarToggle && <span>{lable}</span>}</Link></li>
                     ))}

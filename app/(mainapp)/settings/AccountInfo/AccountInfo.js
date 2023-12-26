@@ -112,7 +112,7 @@ const AccountInfo = () => {
     }, [session, ResetValues])
 
     return (
-        <form onSubmit={!isEdit || handleSubmit(onSubmit)} className='w-full lg:w-[48%] shadow-sm border p-4 rounded-md' >
+        <form onSubmit={!isEdit || handleSubmit(onSubmit)} className='w-full lg:w-[48%] mt-2 shadow-sm border p-4 rounded-md' >
             <h6 className='text-xl font-semibold'>Account Info</h6>
             <div className={`flex items-center ${isEdit ? "justify-between" : "gap-3"} lg:py-4 flex-wrap`}>
                 {inputs.map(({ width, ...input }) =>
