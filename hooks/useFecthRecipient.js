@@ -21,7 +21,7 @@ export const useFecthRecipientUser = (chat = { members: [] }, user = { _id: null
                 setIsLoading(false)
             }
         }
-        if (chat && user?._id) {
+        if (chat && user?._id && recipientId) {
             getUserChat()
         }
     }, [chat, recipientId, user?._id])

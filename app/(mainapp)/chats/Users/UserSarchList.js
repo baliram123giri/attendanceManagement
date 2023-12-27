@@ -8,14 +8,13 @@ const UserSarchList = ({ setOpen }) => {
     const { CreateChat, usersChat } = useContext(ChatContex)
 
     return (
-        <section className='w-full'>
+        <section className='w-full overflow-auto'>
             <div className='bg-white py-4'>
                 <table className='w-full text-xs '>
                     <thead className='bg-gray-100 shadow h-10'>
                         <tr>
                             <th className='w-20 text-start ps-4'>Sr</th>
                             <th className='text-start'>Name</th>
-                            <th className='text-start'>Email</th>
                             <th className='text-start'>Message</th>
                         </tr>
                     </thead>
@@ -23,7 +22,7 @@ const UserSarchList = ({ setOpen }) => {
                         {
                             usersList && usersList.map(({ _id, name, email, }, index) => {
                                 const isChat = usersChat?.some(({ members }) => members?.includes(_id))
-                                if (isChat) {
+                                if (isChat || (user?._id === _id)) {
                                     return null
                                 }
                                 return <tr key={_id} className='py-3 h-10 border-b'>
@@ -34,7 +33,6 @@ const UserSarchList = ({ setOpen }) => {
                                         </div>
                                         <h6>{name}</h6>
                                     </div> </td>
-                                    <td>{email}</td>
                                     <td><MdOutlineMessage onClick={() => {
                                         CreateChat({ firstId: user?._id, secondId: _id })
                                         setOpen(false)
