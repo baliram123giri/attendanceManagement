@@ -25,7 +25,7 @@ const Notification = () => {
                     {count}
                 </div>}
                 <IoIosNotifications size={25} />
-                <div className={`${count ? "" : "hidden"} hidden group-hover:block absolute top-[65px] z-10 border min-w-[300px] -left-[150px] bg-white shadow-sm `}>
+                <div className={`${count ? "" : "hidden"} hidden group-hover:block absolute top-[40px] z-10 border min-w-[300px] -left-[150px] bg-white shadow-sm `}>
                     <div className='flex gap-1 p-3 px-5 items-center  border-b pb-2'>
                         <GoBell size={13} />
                         <h6 className='text-xs font-bold'>Notifications({count})</h6>

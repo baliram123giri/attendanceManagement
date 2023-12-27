@@ -16,6 +16,7 @@ import { IoChatbubblesOutline } from "react-icons/io5";
 import { CiSettings } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image"
+import LogoutBtn from "../Header/LogoutBtn"
 const Aside = ({ count, open, setOpen }) => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -92,9 +93,12 @@ const Aside = ({ count, open, setOpen }) => {
                 </div>
                 <ol className="pt-0 lg:pt-8">
                     {Menu.map(({ key, icon, lable }) => (
-                        <li className="mb-2" key={key}><Link href={key} className={`flex ${(pathname === key) || (`/${pathname?.split("/")[1]}` === key) ? "bg-main-app-secondary" : ""} items-center gap-2 ${asideBarToggle ? "" : "justify-center"} text-main-xl p-2 text-white`}>{icon} {asideBarToggle && <span>{lable}</span>}</Link></li>
+                        <li className="mb-2" key={key}><Link href={key} className={`flex ${(pathname === key) || (`/${pathname?.split("/")[1]}` === key) ? "bg-main-app-secondary" : ""} items-center gap-2 ${asideBarToggle ? "" : "lg:justify-center"} text-main-xl p-2 text-white`}>{icon}  <span className="lg:hidden">{lable}</span> {asideBarToggle && <span className="hidden lg:block">{lable}</span>}</Link></li>
                     ))}
                 </ol>
+            </div>
+            <div className="lg:hidden">
+                <LogoutBtn />
             </div>
         </aside>
     )

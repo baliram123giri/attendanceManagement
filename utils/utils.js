@@ -151,4 +151,43 @@ export const downloadImage = async (imageUrl, name) => {
 export const isJwt = (str) => {
     const jwtPattern = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/=]*$/;
     return jwtPattern.test(str);
-  };
+};
+
+function getWeekDates(date, result = []) {
+    const startDate = new Date(date);
+
+    for (let i = 7; i >= 1; i--) {
+        const newDate = new Date(startDate);
+        newDate.setDate(startDate.getDate() - i + 1);
+
+        result.push(newDate.toLocaleDateString())
+    }
+    return result
+}
+
+
+export function getAttendance(data = [], users = [], date) {
+    try {
+        const weekend = getWeekDates(date)
+        const finalData = users.map(allUser => {
+            const attendance = {}
+            weekend.forEach(currDate => {
+                if (currDate in attendance) {
+                    return false
+                } else {
+                    attendance[currDate.split("/").reverse().join("-")] = data.findIndex((attendanceData) => (attendanceData.date === currDate) && (attendanceData.studentID.name === allUser.name)) !== -1
+                }
+            })
+            return {
+                name: allUser.name,
+                attendance
+
+            }
+        })
+        return finalData
+    } catch (error) {
+        console.log(error)
+    }
+
+
+}

@@ -18,7 +18,7 @@ let UserListCard = ({ avatar, isActive = false, chat, user, Search }) => {
 
     useEffect(() => {
         const searchBounce = setTimeout(() => {
-            if (recipientUser.name?.toLowerCase().includes(Search?.toLowerCase())) {
+            if (recipientUser?.name?.toLowerCase()?.includes(Search?.toLowerCase())) {
                 setFilterUser(recipientUser)
             } else {
                 setFilterUser(null)

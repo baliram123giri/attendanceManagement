@@ -174,22 +174,23 @@ const Calendar = () => {
           })} disabled={isJoined} className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${isJoined ? "bg-main-app-secondary/50 cursor-not-allowed" : "bg-main-app-secondary "} me-2 shadow-md rounded text-white`}><HiCursorArrowRipple /> {isJoined ? "Joined" : isLoading ? "Loading" : `Join`}</button>
         </div >
       </div >}
-
-      <div className="calendar bg-white">
-        <div className="header">
-          <button onClick={prevMonth} className='text-main-app-secondary'><HiMiniArrowLongLeft size={25} /></button>
-          <h2>{currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</h2>
-          {<button className={`${" text-main-app-secondary"}`} onClick={nextMonth}><HiMiniArrowLongRight size={25} /></button>}
-        </div>
-        <div className="days pb-4">
-          <div className="day-label">Sun</div>
-          <div className="day-label">Mon</div>
-          <div className="day-label">Tue</div>
-          <div className="day-label">Wed</div>
-          <div className="day-label">Thu</div>
-          <div className="day-label">Fri</div>
-          <div className="day-label">Sat</div>
-          {isLoadingAttendanceList ? <RotateLoader width={30} /> : renderDays()}
+      <div className='w-full  overflow-auto '>
+        <div className="calendar me-auto bg-white w-[600px] lg:w-full">
+          <div className="header">
+            <button onClick={prevMonth} className='text-main-app-secondary'><HiMiniArrowLongLeft size={25} /></button>
+            <h2>{currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</h2>
+            {<button className={`${" text-main-app-secondary"}`} onClick={nextMonth}><HiMiniArrowLongRight size={25} /></button>}
+          </div>
+          <div className="days pb-4">
+            <div className="day-label">Sun</div>
+            <div className="day-label">Mon</div>
+            <div className="day-label">Tue</div>
+            <div className="day-label">Wed</div>
+            <div className="day-label">Thu</div>
+            <div className="day-label">Fri</div>
+            <div className="day-label">Sat</div>
+            {isLoadingAttendanceList ? <RotateLoader width={30} /> : renderDays()}
+          </div>
         </div>
       </div>
     </>

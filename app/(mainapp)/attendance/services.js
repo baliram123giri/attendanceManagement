@@ -11,3 +11,9 @@ export const attendanceList = async ({ year, month }) => {
     return data
 }
 
+export const weeklyAttendanceList = async ({ lastDate, today }) => {
+    today?.setHours(23, 59, 59, 999)
+    const { data } = await myAxios.post(`/attendance/list/weekly`, { today: today.toISOString(), lastDate: lastDate.toISOString() })
+    return data
+}
+

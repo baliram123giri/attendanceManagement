@@ -27,7 +27,7 @@ const LogoutBtn = () => {
     })
     if (isLoading) return <div className='flex items-center justify-center'><RotateLoader width={20} /></div>
     return (
-        <div onClick={mutate} className='bg-white border rounded-md p-1 shadow-sm'><CiLock size={25} /></div>
+        <div onClick={mutate} className='bg-white border lg:rounded-md p-1 shadow-sm flex items-center gap-1'><CiLock size={25} /> <span className='lg:hidden'>Logout</span></div>
     )
 }
 

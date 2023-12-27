@@ -22,7 +22,10 @@ const ProfileData = () => {
     return (
         <>
             <div className='lg:hidden'>
-                <IoMdMenu onClick={() => setOpen(true)} size={30} className='cursor-pointer' />
+                <div className='relative'>
+                    <IoMdMenu onClick={() => setOpen(true)} size={30} className='cursor-pointer' />
+                    {count > 0 && !open && <div className='absolute top-[5px] right-0 w-3 bg-main-app-secondary h-3 rounded-full '></div>}
+                </div>
                 {open && <div className='absolute z-10 left-0 h-[110vh] bg-neutral-950/10 w-full top-0 lg:hidden'>
                     <Aside count={count} open={open} setOpen={setOpen} />
                 </div>}
