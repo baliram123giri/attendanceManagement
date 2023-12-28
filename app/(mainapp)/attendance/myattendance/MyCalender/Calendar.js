@@ -14,10 +14,11 @@ import { addAttendance, attendanceList } from '../../services';
 import { toast } from 'react-toastify';
 import { baseURL } from '@/utils/utils';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
+import { useRouter } from 'next/navigation';
 const io = require("socket.io-client")
 const Calendar = () => {
   //socket io
-
+  const { replace } = useRouter()
   //socketRef red 
   const socketRef = useRef(null)
 
@@ -30,13 +31,19 @@ const Calendar = () => {
   }
 
   //attendace list 
-  const { mutate: muateAttendanceList, isLoading: isLoadingAttendanceList, data } = useMutation(attendanceList)
+  const { mutate: muateAttendanceList, isLoading: isLoadingAttendanceList, data } = useMutation(attendanceList, {
+    onSuccess() {
+      //redirecto to url 
+      replace(course?.link)
+    }
+  })
 
 
   const { mutate, isLoading } = useMutation(addAttendance, {
     onSuccess({ message }) {
       toast(message, { type: "success" })
       muateAttendanceList({ year: currentDate.getFullYear(), month: currentDate.getMonth() + 1 })
+
     },
     onError({ response: { data: { message } } }) {
       toast(message, { type: "error" })

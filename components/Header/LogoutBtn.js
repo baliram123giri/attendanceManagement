@@ -1,14 +1,15 @@
 "use client"
-import { baseURL, myAxios } from '@/utils/utils';
+import { myAxios } from '@/utils/utils';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react'
 import { CiLock } from "react-icons/ci";
 import { toast } from 'react-toastify';
 import RotateLoader from '../LoadingSpinner/RotateLoader';
-import { useRouter } from 'next/navigation';
+
+import { signOut } from 'next-auth/react';
 
 const LogoutBtn = () => {
-    const { replace } = useRouter()
+
     const { isLoading, mutate } = useMutation(async () => {
         try {
             const { data } = await myAxios.get(`/users/logout`)
@@ -17,9 +18,11 @@ const LogoutBtn = () => {
             console.log(error.response)
         }
     }, {
-        onSuccess({ message }) {
+        onSuccess: async function ({ message }) {
             toast(message, { type: "success" })
-            replace(`${process.env.NODE_ENV === "development" ? "" : "https://app.bgtechub.com/logout"}/logout`)
+            await signOut().then(() => {
+                window.location.reload()
+            })
         },
         onError({ response: { data: { message } } }) {
             toast(message, { type: "error" })

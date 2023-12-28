@@ -17,6 +17,7 @@ import { CiSettings } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image"
 import LogoutBtn from "../Header/LogoutBtn"
+import { FaUserCircle } from "react-icons/fa"
 const Aside = ({ count, open, setOpen }) => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -70,11 +71,13 @@ const Aside = ({ count, open, setOpen }) => {
         <aside className={` h-full asidebar    ${asideBarToggle ? "" : "collapsed"} bg-main-app-primary flex flex-col justify-between `}>
             <div>
                 <div className="bg-white relative flex flex-col items-center py-2 lg:hidden">
-                    {session?.data?.user?.avatar && <div className='w-7 h-7 relative '>
+                    {session?.data?.user?.avatar ? <div className='w-7 h-7 relative '>
                         <Image src={session?.data?.user?.avatar} alt='avatar' layout='fill' className="rounded-full" />
+                    </div> : <div className='w-7 h-7 relative '>
+                        <FaUserCircle className='text-gray-400' size={40} />
                     </div>
                     }
-                    <h6 className='font-semibold group hover:text-blue-400'>{session?.data?.user?.name}</h6>
+                    <h6 className='font-semibold group hover:text-blue-400 mt-2'>{session?.data?.user?.name}</h6>
                     <div onClick={() => setOpen(false)} className="absolute right-0 top-0 border rounded-md p-1 flex justify-center items-center">
                         <IoMdClose size={30} />
                     </div>

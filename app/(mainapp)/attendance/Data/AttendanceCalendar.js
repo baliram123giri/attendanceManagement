@@ -7,14 +7,16 @@ import { AuthContext } from '@/Provider/contexApi/AuthContext';
 import { getAttendance } from '@/utils/utils';
 import { weeklyAttendanceList } from '../services';
 import PageLoader from '@/components/LoadingSpinner/PageLoader';
+import { useSession } from 'next-auth/react';
 
 const AttendanceCalendar = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const session = useSession()
   const { usersList } = useContext(AuthContext)
-
+  const user = session?.data?.user
   const { data, mutate, isLoading } = useMutation(weeklyAttendanceList)
 
-  const attendanceData = useMemo(() => getAttendance(data, usersList, startDate.toLocaleDateString("en-us")), [data, startDate, usersList])
+  const attendanceData = useMemo(() => getAttendance(data, usersList?.filter(({ _id }) => _id !== user?._id), startDate.toLocaleDateString("en-us")), [data, startDate, usersList])
 
   // console.log(startDate.toISOString())
   const generateDateArray = (start) => {
