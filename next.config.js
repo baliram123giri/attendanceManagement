@@ -9,6 +9,7 @@
 // }
 
 module.exports = {
+
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Allow importing MP3 files
     config.module.rules.push({
@@ -27,4 +28,8 @@ module.exports = {
     domains: ['res.cloudinary.com'], // Add your image domain(s) here
   },
   reactStrictMode: false,
+  // Add the experimental section here
+  experimental: {
+    webpackBuildWorker: true,
+  },
 };
