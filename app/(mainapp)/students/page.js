@@ -28,9 +28,9 @@ const Students = async () => {
                                     <td className='ps-4'>{index + 1}</td>
                                     <td >{_id}</td>
                                     <td><div className='flex items-center gap-1'>
-                                        <div className={`w-7 h-7  rounded-full text-white justify-center flex items-center`}>
-                                            {/* <h6>{name?.split(" ")[0]?.charAt(0)?.toUpperCase() + name?.split(" ")[1]?.charAt(0)?.toUpperCase()}</h6> */}
-                                            <UserAvtar avatar={avatar} color={`${index % 2 == 0 ? "#583D72" : "#FF8F72"}`} name={name} />
+                                        <div className={`w-7 h-7 ${index % 2 == 0 ? "bg-main-app-primary" : "bg-main-app-secondary"} rounded-full text-white justify-center flex items-center relative`}>
+
+                                            <UserAvtar avatar={avatar} name={name} />
                                         </div>
                                         <h6>{name}</h6>
                                     </div> </td>

@@ -1,10 +1,25 @@
 "use client"
+import Image from 'next/image'
 import React from 'react'
-import Avatar from 'react-avatar'
-const UserAvtar = ({ name, avatar, color }) => {
-    return (
-        <Avatar size='30'  round {...(avatar ? { src: avatar } : { name, color })} />
-    )
+
+const UserAvtar = ({ name, avatar }) => {
+    var capitalizedFirstName = name.split(" ")[0].charAt(0).toUpperCase();
+
+    // Check if there is a last name before accessing it
+    var capitalizedLastName = name.split(" ").length > 1
+        ? name.split(" ")[1].charAt(0).toUpperCase()
+        : "";
+
+    var capitalizedFullName = capitalizedFirstName + capitalizedLastName;
+
+    if (avatar) {
+        return <Image src={avatar} alt={name} layout='fill' />
+    } else {
+        return (
+            <h6>{capitalizedFullName}</h6>
+        )
+    }
+
 }
 
 export default UserAvtar
