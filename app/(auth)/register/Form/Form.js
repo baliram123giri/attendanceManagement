@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema } from './validation';
@@ -14,12 +14,15 @@ import { myAxios } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 const Form = () => {
+    const [showpass, setShowpass] = useState(false);
     const { push } = useRouter()
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange"
     })
+
     const { isLoading, mutate } = useMutation(async (values) => {
         try {
             const { data } = await myAxios.post(`/user/register`, values)
@@ -39,7 +42,26 @@ const Form = () => {
     const onSubmit = (value) => {
         mutate(value)
     }
-    const inputs = [
+    const ShowHideComp = useCallback(
+        function () {
+            return {
+                type: showpass ? "text" : "password",
+                endIcon: (
+                    <div
+                        className="cursor-pointer px-2"
+                        onClick={() =>
+                            setShowpass(!showpass)
+                        }
+                    >
+                        {showpass ? <LuEye /> : <LuEyeOff />}
+                    </div>
+                ),
+            };
+        },
+        [showpass]
+    );
+
+    const inputs = useMemo(() => [
         {
             id: 1,
             name: "name",
@@ -62,10 +84,13 @@ const Form = () => {
         {
             id: 4,
             name: "password",
+            type: "password",
             placeholder: "Password*",
-            icon: <FaUnlock size={20} />
+            icon: <FaUnlock size={20} />,
+            ...ShowHideComp()
         }
-    ]
+    ], [ShowHideComp])
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4' >
             {inputs.map(({ id, icon, ...rest }) => {

@@ -1,6 +1,6 @@
 "use client"
-import React, { useState } from 'react'
-import { FaRegUser } from "react-icons/fa6";
+import React, { useCallback, useState } from 'react'
+import { FaRegUser, FaUnlock } from "react-icons/fa6";
 import { FaUnlockAlt } from "react-icons/fa";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -11,9 +11,12 @@ import { loginApi } from './service';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { signIn } from 'next-auth/react';
+import { LuEye, LuEyeOff } from 'react-icons/lu';
+import AppInput from '@/components/Inputs/AppInput';
 
 const Form = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [showpass, setShowpass] = useState(false);
+    const { register, watch, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange"
     })
@@ -30,6 +33,25 @@ const Form = () => {
             setLoader(false)
         }
     })
+
+    const ShowHideComp = useCallback(
+        function () {
+            return {
+                type: showpass ? "text" : "password",
+                endIcon: (
+                    <div
+                        className="cursor-pointer px-2"
+                        onClick={() =>
+                            setShowpass(!showpass)
+                        }
+                    >
+                        {showpass ? <LuEye /> : <LuEyeOff />}
+                    </div>
+                ),
+            };
+        },
+        [showpass]
+    );
 
     const onSubmit = async (value) => {
         setLoader(true)
@@ -57,10 +79,11 @@ const Form = () => {
             </div>
             <div>
                 <div className='flex items-center gap-2'>
-                    <FaUnlockAlt size={20} />
-                    <input {...register("password")} placeholder='Password*' type="password" className='bg-white/5 text-xs rounded-sm border-white border focus:outline-none px-2 p-2 w-full' />
+                    <FaUnlock size={20} />
+                    <AppInput {...{
+                        ...ShowHideComp()
+                    }} register={register} placeholder='Password*' watch={watch} errors={errors} name={"password"} />
                 </div>
-                {errors.password && <span className='text-red-400 text-xs ps-6'> {errors.password.message} </span>}
             </div>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2 ps-1'>

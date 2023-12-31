@@ -8,6 +8,7 @@ import useClipboard from "react-use-clipboard";
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { useMutation } from '@tanstack/react-query';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
+import UserAvtar from '../../students/UserAvtar'
 const io = require("socket.io-client")
 const JoinedList = () => {
     const [attendance, setAttendance] = useState([]);
@@ -82,13 +83,13 @@ const JoinedList = () => {
                     </thead>
                     <tbody>
                         {
-                            attendance && attendance?.map(({ _id, name, course, time }, index) => {
+                            attendance && attendance?.map(({ _id, name, course, avatar, time }, index) => {
 
                                 return <tr key={_id} className='py-3 h-10 border-b'>
                                     <td className='ps-4'>{index + 1}</td>
                                     <td><div className='flex items-center gap-1'>
                                         <div className='w-7 h-7 bg-main-app-secondary rounded-full text-white justify-center flex items-center'>
-                                            <h6>{name?.split(" ")[0]?.charAt(0)?.toUpperCase() + name?.split(" ")[1]?.charAt(0)?.toUpperCase()}</h6>
+                                            <UserAvtar avatar={avatar} name={name} />
                                         </div>
                                         <h6>{name}</h6>
                                     </div> </td>
