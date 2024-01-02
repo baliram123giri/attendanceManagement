@@ -31,18 +31,16 @@ const Calendar = () => {
   }
 
   //attendace list 
-  const { mutate: muateAttendanceList, isLoading: isLoadingAttendanceList, data } = useMutation(attendanceList, {
-    onSuccess() {
-      //redirecto to url 
-      replace(course?.link)
-    }
-  })
+  const { mutateAsync: muateAttendanceList, isLoading: isLoadingAttendanceList, data } = useMutation(attendanceList)
 
 
   const { mutate, isLoading } = useMutation(addAttendance, {
-    onSuccess({ message }) {
+    onSuccess: async function ({ message }) {
       toast(message, { type: "success" })
-      muateAttendanceList({ year: currentDate.getFullYear(), month: currentDate.getMonth() + 1 })
+      await muateAttendanceList({ year: currentDate.getFullYear(), month: currentDate.getMonth() + 1 }).then(() => {
+        //redirecto to url 
+        replace(course?.link)
+      })
 
     },
     onError({ response: { data: { message } } }) {
