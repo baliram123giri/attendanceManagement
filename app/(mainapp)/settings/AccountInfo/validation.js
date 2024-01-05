@@ -3,6 +3,9 @@ import * as Yup from "yup"
 export const updateAccountValidation = () => {
     return Yup.object().shape({
         name: Yup.string().required("Name required"),
+        dob: Yup.string().required("DOB required"),
+        gender: Yup.string().required("Gender required"),
+        stream: Yup.string().required("Stream required"),
         email: Yup.string().email("Invalid email").required("Email required"),
         mobile: Yup.string().matches(/^[0-9]{10}$/, 'Mobile number must be exactly 10 digits')
             .required('Mobile number is required'),

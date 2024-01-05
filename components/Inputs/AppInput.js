@@ -17,17 +17,18 @@ const AppInput = ({
   onChange = false,
   endIcon = false,
   edit = true,
-  watch
+  watch,
+  customvalue
 }) => {
   switch (type) {
     //select
     case "select":
       return (
-        <div className="flex flex-col gap-1 text-xs">
+        <div className="flex flex-col gap-1 text-sm ">
           {label && <MyLabel name={name} label={label} required={required} />}
           {edit ? <select
             disabled={disabled}
-            className={`border rounded-sm p-2 px-1 w-full text-gray-600 focus:outline-none`}
+            className={`border rounded-sm text-xs p-2 px-1 w-full text-gray-600 focus:outline-none`}
             {...register(name, { onChange: (e) => onSelect && onSelect(e) })}
           >
             <option value="">{`Select ${placeholder || ""}`}</option>
@@ -79,7 +80,7 @@ const AppInput = ({
               {...register(name, { onChange: (e) => onChange && onChange(e) })}
             />
             {endIcon}
-          </div> : <span>{(watch && watch(name)) || "Na"}</span>
+          </div> : <span>{(customvalue || (watch && watch(name))) || "Na"}</span>
           }
           {errors?.[name] && (
             <span className="text-xs text-red-400">{errors[name].message}</span>

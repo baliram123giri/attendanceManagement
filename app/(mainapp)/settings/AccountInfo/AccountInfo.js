@@ -23,6 +23,11 @@ const AccountInfo = () => {
         mode: "onChange"
     })
 
+    const { mutate: mutateStramList, isLoading: isLoadingStream, data: dataStreams } = useMutation(async () => {
+        const { data } = await myAxios.get(`/stream/list`)
+        return data
+    })
+
 
     const { mutate, isLoading } = useMutation(async (values) => {
         const { data } = await myAxios.put(`/users/update/account/info`, values, {
@@ -48,6 +53,15 @@ const AccountInfo = () => {
                 formData.append("name", name)
                 formData.append("email", email)
                 formData.append("mobile", mobile)
+                if (value?.dob) {
+                    formData.append("dob", value?.dob)
+                }
+                if (value?.gender) {
+                    formData.append("gender", value?.gender)
+                }
+                if (value?.stream) {
+                    formData.append("stream", value?.stream)
+                }
                 if (avatar.length == 1) {
                     formData.append("avatar", avatar[0])
                 }
@@ -85,12 +99,38 @@ const AccountInfo = () => {
                 placeholder: "Enter Email*",
                 label: "Email",
                 required: true,
-                ...(isEdit ? { width: 100 } : {})
+            },
+            {
+                id: 4,
+                name: "gender",
+                type: "select",
+                options: [{ name: "Male", id: "male" }, { name: "Female", id: "female" }, { name: "Other", id: "other" }],
+                placeholder: "Select Gender*",
+                label: "Gender",
+                required: true,
+            },
+            {
+                id: 5,
+                name: "stream",
+                type: "select",
+                placeholder: "Select Stream*",
+                label: "Stream",
+                isLoading: isLoadingStream,
+                options: dataStreams || [],
+                required: true,
+            },
+            {
+                id: 6,
+                name: "dob",
+                type: "date",
+                label: "DOB",
+                required: true,
             },
 
         ],
-        [isEdit]
+        [dataStreams, isLoadingStream]
     );
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setValue('avatar', file);
@@ -98,8 +138,9 @@ const AccountInfo = () => {
 
     //set inital values
     const ResetValues = useCallback(function () {
-        const { email, name, mobile, avatar } = session.data?.user
-        setValues(setValue, { email, name, mobile, avatar })
+        const { email, name, mobile, avatar, stream, dob, gender } = session.data?.user
+
+        setValues(setValue, { email, name, mobile, avatar, stream, dob, gender })
     }, [session, setValue])
 
     //update default values
@@ -107,9 +148,10 @@ const AccountInfo = () => {
         if (session) {
             if (session?.data) {
                 ResetValues()
+                mutateStramList()
             }
         }
-    }, [session, ResetValues])
+    }, [session, ResetValues, mutateStramList])
 
     return (
         <form onSubmit={!isEdit || handleSubmit(onSubmit)} className='w-full lg:w-[48%] mt-2 shadow-sm border p-4 rounded-md' >

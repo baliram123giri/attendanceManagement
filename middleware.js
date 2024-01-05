@@ -22,7 +22,7 @@ export async function middleware(request) {
         }
     } else if (!accessToken) {
         return NextResponse.redirect(new URL('/login', request.url))
-    } else if (!isAdmin && checkPath(["/meeting", "/students"])) {
+    } else if (!isAdmin && checkPath(["/meeting", "/students", "stream"])) {
         //if its not not admin dont access
         return NextResponse.redirect(new URL('/', request.url))
     } else if (!isAdmin) {
@@ -42,6 +42,6 @@ export async function middleware(request) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/login", "/forgetpassword", "/", "/meeting", "/chats", "/settings", "/attendance/:path*", "/classes", "/assignments/:path*", "/students"],
+    matcher: ["/login", "/forgetpassword", "/", "/meeting", "/stream", "/chats", "/settings", "/attendance/:path*", "/classes", "/assignments/:path*", "/students"],
 }
 

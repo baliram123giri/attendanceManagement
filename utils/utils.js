@@ -8,8 +8,8 @@ export const getLocalStorageItem = (name) => {
 }
 
 
-// export const baseURL = "http://localhost:8000"
-export const baseURL = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
+export const baseURL = "http://localhost:8000"
+// export const baseURL = process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://api.bgtechub.com"
 
 export const socket = io(baseURL)
 

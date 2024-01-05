@@ -18,6 +18,7 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image"
 import LogoutBtn from "../Header/LogoutBtn"
 import { FaUserCircle } from "react-icons/fa"
+import { GiSpikyField } from "react-icons/gi";
 const Aside = ({ count, open, setOpen }) => {
     const dispatch = useDispatch()
     const { asideBarToggle } = useSelector(state => state.layoutReducer)
@@ -64,6 +65,11 @@ const Aside = ({ count, open, setOpen }) => {
         key: "/settings",
         lable: "Settings",
         icon: <CiSettings size={25} />
+    },
+    {
+        key: "/stream",
+        lable: "Streams",
+        icon: <GiSpikyField size={25} />
     },
     ]
 
