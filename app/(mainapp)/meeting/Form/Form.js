@@ -18,10 +18,7 @@ const Form = ({ data }) => {
             return data;
         },
         {
-            ...statusHandler(),
-            onSettled() {
-                socket.emit("meeting", null);
-            },
+            ...statusHandler()
         }
     );
 
@@ -37,7 +34,7 @@ const Form = ({ data }) => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className=" shadow-sm my-2 bg-white flex flex-wrap items-center w-full lg:w-1/2"
+            className=" shadow-sm my-2 bg-white flex flex-wrap items-center w-full lg:w-[70%]"
         >
             <div className="bg-main-app-error w-14 h-10 text-white flex justify-center items-center">
                 <SiGooglemeet size={18} />

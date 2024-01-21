@@ -27,7 +27,7 @@ const DeleteUser = ({ userid }) => {
     }
     if (isLoading) return <div className='flex justify-center items-center'> <RotateLoader width={25} /></div>
     return (
-        <div onClick={deleteHandler} className='text-center text-red-600 hover:opacity-60 flex justify-center border w-7 h-7 items-center rounded-md cursor-pointer mx-auto '>
+        <div onClick={deleteHandler} className='text-center text-red-600 hover:opacity-60 flex justify-center border w-7 h-7 items-center rounded-md cursor-pointer  '>
             <MdOutlineDeleteOutline size={20} />
         </div>
     )

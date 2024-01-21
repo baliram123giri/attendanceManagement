@@ -16,7 +16,7 @@ const AttendanceCalendar = () => {
   const user = session?.data?.user
   const { data, mutate, isLoading } = useMutation(weeklyAttendanceList)
 
-  const attendanceData = useMemo(() => getAttendance(data, usersList?.filter(({ _id }) => _id !== user?._id), startDate.toLocaleDateString("en-us")), [data, startDate, usersList])
+  const attendanceData = useMemo(() => getAttendance(data, usersList?.filter(({ _id }) => _id !== user?._id), startDate.toLocaleDateString("en-us")), [data, startDate, user?._id, usersList])
 
   // console.log(startDate.toISOString())
   const generateDateArray = (start) => {
@@ -68,13 +68,13 @@ const AttendanceCalendar = () => {
             <tr>
               <th>SrNo</th>
               <th>Name</th>
-              {dateArray.map((date, index) => (
+              {dateArray?.map((date, index) => (
                 <th key={index}>{date}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {attendanceData.map((row, rowIndex) => (
+            {attendanceData?.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 <td>{rowIndex + 1}</td>
                 <td>{row.name}</td>

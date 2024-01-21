@@ -12,13 +12,14 @@ import { GrInProgress } from "react-icons/gr";
 import { useMutation } from '@tanstack/react-query';
 import { addAttendance, attendanceList } from '../../services';
 import { toast } from 'react-toastify';
-import { baseURL } from '@/utils/utils';
+import { baseURL, checkTimeLapse, myAxios } from '@/utils/utils';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
 import { useRouter } from 'next/navigation';
 const io = require("socket.io-client")
 const Calendar = () => {
   //socket io
   const { replace } = useRouter()
+  const [MeetingLink, setMeetLink] = useState(null)
   //socketRef red 
   const socketRef = useRef(null)
 
@@ -32,6 +33,14 @@ const Calendar = () => {
 
   //attendace list 
   const { mutateAsync: muateAttendanceList, isLoading: isLoadingAttendanceList, data } = useMutation(attendanceList)
+  const { mutate: matateMeeting, isLoading: isLoadingMeeting } = useMutation(async () => {
+    const { data } = await myAxios.get(`/meeting/list`)
+    return data
+  }, {
+    onSuccess(data) {
+      setMeetLink(data)
+    }
+  })
 
 
   const { mutate, isLoading } = useMutation(addAttendance, {
@@ -39,7 +48,7 @@ const Calendar = () => {
       toast(message, { type: "success" })
       await muateAttendanceList({ year: currentDate.getFullYear(), month: currentDate.getMonth() + 1 }).then(() => {
         //redirecto to url 
-        replace(course?.link)
+        replace(MeetingLink?.link)
       })
 
     },
@@ -53,12 +62,12 @@ const Calendar = () => {
 
   //  console.log(new Date("2023-10-11T18:30:00.000Z").toLocaleDateString("en-US"))
   function findFunctionAndUpdate(renderedDate) {
+    console.log(renderedDate)
     const result = data?.find(({ date }) => {
       return date === renderedDate
     })
     return result
   }
-
   const daysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -73,7 +82,11 @@ const Calendar = () => {
 
 
   function getFullDate(date, month) {
-    return new Date(currentDate.getFullYear(), month, date).toLocaleDateString()
+    return new Date(currentDate.getFullYear(), month, date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    })
   }
 
   const renderDays = () => {
@@ -121,8 +134,11 @@ const Calendar = () => {
             {!isFound?.isPresent && (new Date(currentDate.getFullYear(), month, i) < new Date()) && <div className={`text-xs flex items-center gap-1 flex-wrap ${activeDate ? "text-main-app-primary font-semibold" : "text-red-500/80"} `}>{activeDate ? <GrInProgress /> : <MdCancel />}<span>{activeDate ? "Waiting for join" : "Not Present"}</span></div>}
           </div>
           <div className='flex flex-wrap justify-between items-center'>
-            {isFound?.course && <div className='text-[10px] bg-lime-200/50 my-1 text-lime-600 font-[500] inline-block  p-2 rounded mx-2'>{isFound?.course}</div>}
-            {isFound?.isPresent && isFound?.time && <div className='text-xs my-1 ms-2 me-4'><span>{isFound?.time}</span></div>}
+            {isFound?.courses && isFound?.courses?.map((ele, i) => (
+              <div key={i} className={`text-[10px] ${i % 2 == 0 ? "bg-lime-200/50 text-lime-600 " : " bg-blue-200/50 text-blue-600"} my-1  font-[500] inline-block  p-2 rounded mx-2`}>{ele.name} {ele.time}</div>
+            ))}
+
+            {/* {isFound?.isPresent && isFound?.time && <div className='text-xs my-1 ms-2 me-4'><span>{isFound?.time}</span></div>} */}
           </div>
 
           {/* {(i === 1 || i === 20) && <div className='text-[10px] mt-1 bg-blue-200/50 text-blue-600 font-[500] inline-block  p-2 rounded mx-2'>ReactJs Devlopement</div>}
@@ -150,7 +166,7 @@ const Calendar = () => {
     });
   };
 
-  const isJoined = findFunctionAndUpdate(getFullDate(new Date().getDate(), new Date().getMonth())) || currentDate.getMonth() !== new Date().getMonth()
+  const isJoined = currentDate.getMonth() !== new Date().getMonth()
 
   //call api
   useEffect(() => {
@@ -159,23 +175,37 @@ const Calendar = () => {
 
   useEffect(() => {
     socketRef.current = io(baseURL);
-    socketRef.current.emit("meeting", null)
     socketRef.current.on("meeting", (data) => {
-      setCourse(data[0] || null)
+      setMeetLink(data)
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    socketRef.current.on("deleteMeeting", () => {
+      matateMeeting()
+    })
+    return () => {
+      socketRef.current.off("meeting")
+      socketRef.current.off("deleteMeeting")
+    }
+  }, [MeetingLink?._id, socketRef, matateMeeting])
+
+  useEffect(() => {
+    matateMeeting()
+  }, [matateMeeting])
+
+  if (isLoadingMeeting) return <RotateLoader />
+  const isShowLink = checkTimeLapse(MeetingLink?.updatedAt)
 
   return (
     <>
-      {course && <div className=' shadow-sm my-2 bg-white flex items-center'>
+
+      {MeetingLink && isShowLink && <div className=' shadow-sm my-2 bg-white flex items-center'>
         <div className='bg-main-app-error w-10 h-10 text-white flex justify-center items-center'><MdEventAvailable size={18} /></div>
-        <h6 className='mx-2 text-sm'>{`"I'm joining the `} <span className='font-semibold'>{course?.course?.name}</span> class on <span className='font-semibold'>{course?.date}</span></h6>
+        <h6 className='mx-2 text-sm'>{`"I'm joining the `} <span className='font-semibold'>{MeetingLink?.course?.name}</span> class on <span className='font-semibold'>{MeetingLink?.date}</span></h6>
         <div className='flex items-center gap-2 ms-auto text-sm text-main-app-primary font-semibold' >
           <TimeWatch />
           <button onClick={() => mutate({
             "isPresent": true,
-            "course": course?.course?._id
+            "course": MeetingLink?.course?._id,
+            "teacherId": MeetingLink?.userId
           })} disabled={isJoined} className={`border not px-5 p-1 ms-auto flex items-center gap-1 ${isJoined ? "bg-main-app-secondary/50 cursor-not-allowed" : "bg-main-app-secondary "} me-2 shadow-md rounded text-white`}><HiCursorArrowRipple /> {isJoined ? "Joined" : isLoading ? "Loading" : `Join`}</button>
         </div >
       </div >}

@@ -9,11 +9,14 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { useMutation } from '@tanstack/react-query';
 import RotateLoader from '@/components/LoadingSpinner/RotateLoader';
 import UserAvtar from '../../students/UserAvtar'
+import { useSession } from 'next-auth/react'
 const io = require("socket.io-client")
 const JoinedList = () => {
-    const [attendance, setAttendance] = useState([]);
-    const [meetLink, setMeetLink] = useState(null)
-    const [isCopied, setCopied] = useClipboard(meetLink?.link, {
+    const session = useSession()
+    const [MeetingLink, setMeetingLink] = useState([]);
+    const [joinedListData, setJoinedListData] = useState([]);
+
+    const [isCopied, setCopied] = useClipboard(MeetingLink?.link, {
         // `isCopied` will go back to `false` after 1000ms.
         successDuration: 1000,
     });
@@ -21,18 +24,37 @@ const JoinedList = () => {
     //socketRef red 
     const socketRef = useRef(null)
 
+    //fecth joined api
+    const { mutate: matateMeetingJoinedList, isLoading: isLoadingMeetingJoinedList } = useMutation(async () => {
+        const { data } = await myAxios.get(`/meeting/joined/list`)
+        return data
+    }, {
+        onSuccess(data) {
+            setJoinedListData(data || [])
+        }
+    })
+
+
     const { mutate, isLoading } = useMutation(async () => {
-        const { data } = await myAxios.delete(`/meeting/delete/${meetLink?._id}`)
+        const { data } = await myAxios.delete(`/meeting/delete/${MeetingLink?._id}`)
         return data
     },
         {
             ...statusHandler(), onSettled() {
-                socketRef.current.emit("allAttendance", null)
-                socketRef.current.emit("meeting", null)
-
+                matateMeetingJoinedList()
             }
         }
     )
+
+
+    const { mutate: matateMeeting, isLoading: isLoadingMeeting } = useMutation(async () => {
+        const { data } = await myAxios.get(`/meeting/list`)
+        return data
+    }, {
+        onSuccess(data) {
+            setMeetingLink(data)
+        }
+    })
 
     const deleteMeetingHandler = () => {
         mutate()
@@ -41,31 +63,45 @@ const JoinedList = () => {
     useEffect(() => {
         // Connect to the SocketRef.io server
         socketRef.current = io(baseURL); // replace with your server URL
-        socketRef.current.emit("allAttendance", null)
-        socketRef.current.emit("meeting", null)
         // Listen for the 'allAttendance' event
         socketRef.current.on('allAttendance', (data) => {
-            setAttendance(data);
-            //   console.log(data)
+            matateMeetingJoinedList()
         });
-        socketRef.current.on("meeting", (data) => {
-            setMeetLink(data[0])
+
+        socketRef.current.on('meeting', (data) => {
+            console.log(data)
+            if (data.userId !== session?.data?.user?._id) return
+            setMeetingLink(data)
+        });
+
+        socketRef.current.on("deleteMeeting", () => {
+            matateMeeting()
         })
-        return () => socketRef.current.disconnect()
+
+        return () => {
+            socketRef.current.off("meeting")
+            socketRef.current.off("deleteMeeting")
+            socketRef.current.off("allAttendance")
+        }
         // Clean up the socketRef connection on component unmount
-    }, []); // Empty dependency array ensures this effect runs once when the component mounts
+    }, [MeetingLink?._id, socketRef, session]); // Empty dependency array ensures this effect runs once when the component mounts
+
+    useEffect(() => {
+        matateMeetingJoinedList()
+        matateMeeting()
+    }, [matateMeeting, matateMeetingJoinedList])
 
     return (
         <>
-            {meetLink && <div className='bg-white p-4'>
+            {MeetingLink && <div className='bg-white p-4'>
                 <h6 className='font-semibold'>Google Meet Link</h6>
                 <div className='flex  flex-wrap gap-3 items-center'>
-                    <small>{meetLink?.link}</small>
+                    <small>{isLoadingMeeting ? "Loading..." : MeetingLink?.link}</small>
                     <button onClick={setCopied}>
                         {isCopied ? "Copied! 👍" : <BsCopy className='cursor-pointer hover:text-blue-500' />}
                     </button>
 
-                    {isLoading ? <RotateLoader width={25} /> : <MdOutlineDeleteOutline onClick={deleteMeetingHandler} cursor={"pointer"} className='text-red-600' size={20} />}
+                    {isLoading || isLoadingMeetingJoinedList ? <RotateLoader width={25} /> : <MdOutlineDeleteOutline onClick={deleteMeetingHandler} cursor={"pointer"} className='text-red-600' size={20} />}
 
                 </div>
             </div>}
@@ -83,7 +119,7 @@ const JoinedList = () => {
                     </thead>
                     <tbody>
                         {
-                            attendance && attendance?.map(({ _id, name, course, avatar, time }, index) => {
+                            joinedListData && joinedListData?.map(({ _id, name, avatar, time }, index) => {
 
                                 return <tr key={_id} className='py-3 h-10 border-b'>
                                     <td className='ps-4'>{index + 1}</td>
@@ -93,9 +129,9 @@ const JoinedList = () => {
                                         </div>
                                         <h6>{name}</h6>
                                     </div> </td>
-                                    <td>{course}</td>
+                                    <td>{MeetingLink?.course?.name}</td>
                                     <td>{time}</td>
-                                    <td><DeleteAttendance id={_id} /></td>
+                                    <td><DeleteAttendance id={_id} courseId={MeetingLink?.course?._id} /></td>
                                 </tr>
                             })
                         }

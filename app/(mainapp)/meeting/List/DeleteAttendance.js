@@ -6,10 +6,10 @@ import React from 'react'
 import { MdOutlineDeleteOutline } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import io from "socket.io-client"
-const DeleteAttendance = ({ id }) => {
+const DeleteAttendance = ({ id, courseId }) => {
     const socket = io(baseURL)
     const { mutate, isLoading } = useMutation(async () => {
-        const { data } = await myAxios.delete(`/attendance/delete/${id}`)
+        const { data } = await myAxios.delete(`/attendance/delete/${id}?course=${courseId}`)
         return data
     }, {
         onSuccess({ message }) {

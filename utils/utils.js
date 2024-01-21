@@ -43,19 +43,22 @@ export function setValues(setValue, values) {
     }
 }
 
-// export function getTimeAndDate(type = "date", date = new Date()) {
-//     if (type === "date") {
-//         const day = date.getDate()
-//         const month = date.getMonth() + 1
-//         const year = date.getFullYear()
-//         return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month}/${year}`
-//     } else {
-//         let hours = date.getHours()
-//         const minutes = date.getMinutes()
-//         hours = hours % 12 || 12
-//         return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`
-//     }
-// }
+export function checkTimeLapse(time, hrs = 1) {
+    try {
+        const targetDate = new Date(time)
+        const currentDate = new Date()
+        const timeLapse = currentDate - targetDate
+        const timeHoursInMiliSeconds = hrs * 60 * 60 * 1000
+        if (timeLapse > timeHoursInMiliSeconds) {
+            return false
+        } else {
+            return true
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 
 export function getTimeAndDate(type = "date", date = new Date(), locale = "en-IN", timezone = "Asia/Kolkata") {
     if (type === "date") {
@@ -153,33 +156,44 @@ export const isJwt = (str) => {
     return jwtPattern.test(str);
 };
 
-function getWeekDates(date, result = []) {
-    const startDate = new Date(date);
+function getWeekDates(dateString, result = []) {
+    // Assuming the input date is in the 'MM/DD/YYYY' format
+    const [month, day, year] = dateString.split('/');
+
+    const startDate = new Date(`${year}-${month}-${day}`);
 
     for (let i = 7; i >= 1; i--) {
         const newDate = new Date(startDate);
         newDate.setDate(startDate.getDate() - i + 1);
 
-        result.push(newDate.toLocaleDateString())
+        const formattedDate = newDate.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
+        result.push(formattedDate);
     }
-    return result
+
+    return result;
 }
 
 
 export function getAttendance(data = [], users = [], date) {
     try {
         const weekend = getWeekDates(date)
-        const finalData = users.map(allUser => {
+
+        const finalData = users?.map(allUser => {
             const attendance = {}
+
             weekend.forEach(currDate => {
                 if (currDate in attendance) {
                     return false
                 } else {
-                    attendance[currDate.split("/").reverse().join("-")] = data.findIndex((attendanceData) => (attendanceData.date === currDate) && (attendanceData.studentID.name === allUser.name)) !== -1
+                    attendance[currDate?.split("/").reverse().join("-")] = data?.findIndex((attendanceData) => (attendanceData.date === currDate) && (attendanceData?.studentID?.name === allUser?.name)) !== -1
                 }
             })
             return {
-                name: allUser.name,
+                name: allUser?.name,
                 attendance
 
             }
