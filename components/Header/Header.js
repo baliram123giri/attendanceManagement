@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import React from 'react'
-import { PiStudent } from "react-icons/pi";
+import logo from "@/public/logo_horizontal.png"
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 const ProfileData = dynamic(() => import("./ProfileData"), { ssr: false, loading: () => <>Loading...</> })
 const Header = () => {
 
     return (
         <header className='h-[65px] flex items-center  border-b px-3  justify-between' >
-            <Link href={"/"}><div className='flex items-center gap-2 border px-2 -skew-x-12'><PiStudent className='text-main-app-secondary' size={40} /> <span className=' font-bold text-main-app-primary'>STUDENTS PORTAL</span></div></Link>
-    
+            <Link href={"/"}><div>
+                <Image src={logo} width={200} alt='bgtechhub.com' />
+            </div></Link>
+
             <ProfileData />
         </header>
     )
