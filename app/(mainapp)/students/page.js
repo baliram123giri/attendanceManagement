@@ -28,7 +28,7 @@ const Students = async () => {
                     </thead>
                     <tbody>
                         {
-                            studentsData && studentsData.map(({ _id, name, email, mobile, avatar, isActive }, index) => {
+                            studentsData && studentsData.map(({ _id, name, email, mobile, avatar, isActive, softActive }, index) => {
 
                                 return <tr key={_id} className='py-3 h-10 border-b'>
                                     <td className='ps-4'>{index + 1}</td>
@@ -41,7 +41,7 @@ const Students = async () => {
                                     </div> </td>
                                     <td>{email}</td>
                                     <td>{mobile}</td>
-                                    <td><ActiveHandler isActive={isActive} /></td>
+                                    <td><ActiveHandler id={_id} defaultChecked={isActive && softActive} /></td>
                                     <td className='flex gap-1 justify-center items-center pt-1.5'>
                                         <Link href={{ pathname: `/userinfo`, search: `userid=${_id}` }}>  <div className='text-center text-main-app-primary hover:opacity-60 flex justify-center border w-7 h-7 items-center rounded-md cursor-pointer  '><FaEye /></div></Link>
                                         <DeleteUser userid={_id} />
